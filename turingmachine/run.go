@@ -17,7 +17,7 @@ type Initialize struct {
 func ParseRpcInitializeString(xmlString string) Rpc {
 	var data = Rpc{}
 	if err := xml.Unmarshal([]byte(xmlString), &data); err != nil {
-		fmt.Println("!! RPC initialize XML Unmarshal error: ", err)
+		fmt.Println("!! Error: RPC initialize XML Unmarshal error: ", err)
 	}
 	return data
 }
@@ -26,7 +26,7 @@ func PrintRpcInitXmlByStruct(xmlStruct Rpc) {
 	// marshal (returns []byte)
 	var xmlBuf, err = xml.MarshalIndent(xmlStruct, "", "  ")
 	if err != nil {
-		fmt.Println("!! XML Marshal err: ", err)
+		fmt.Println("!! Error: XML Marshal err: ", err)
 	}
 	fmt.Println("## xml data")
 	fmt.Println(string(xmlBuf))
@@ -49,11 +49,32 @@ type Cell struct {
 
 var TMState TuringMachineState
 
+func GetTuringMachineString(step int) string {
+	var stateString string
+	stateString = fmt.Sprintf("%4d  [S%d] | ", step, TMState.State)
+	for i, cell := range TMState.Tape.CellList {
+		if i == int(TMState.HeadPosition) {
+			stateString += fmt.Sprintf("<%s>|", cell.Symbol)
+		} else {
+			stateString += fmt.Sprintf(" %s |", cell.Symbol)
+		}
+	}
+	return stateString
+}
+
 func RunTuringMachine() {
 	var step = 1
 	var finishState = GetFinishState()
 
+	// header
+	var indent = len([]byte(GetTuringMachineString(step))) - 20
+	var headerString = fmt.Sprintf("Step State | Tape %%%ds | Next Write Move\n", indent)
+	fmt.Printf(headerString, " ")
+
+	// Run
 	for TMState.State != finishState {
+		var currentString = GetTuringMachineString(step)
+
 		// read current symbol under head-position
 		var currentHeadPosition = TMState.HeadPosition
 		var currentSymbol = TMState.Tape.CellList[currentHeadPosition].Symbol
@@ -67,6 +88,7 @@ func RunTuringMachine() {
 		if action.Symbol != "" {
 			TMState.Tape.CellList[currentHeadPosition].Symbol = action.Symbol
 		}
+
 		// move to next head position
 		switch action.HeadMove {
 		case "left":
@@ -75,9 +97,15 @@ func RunTuringMachine() {
 			TMState.HeadPosition += 1
 		}
 
-		fmt.Println("step: ", step)
-		fmt.Printf("  current: head: %d, state:%d, symbol:%s\n", currentHeadPosition, currentState, currentSymbol)
-		fmt.Printf("  action : head: %d, state:%d, symbol:%s, move:%s\n", TMState.HeadPosition, action.State, action.Symbol, action.HeadMove)
+		var moveString string
+		switch action.HeadMove {
+		case "left":
+			moveString = "<= "
+		case "right":
+			moveString = " =>"
+		}
+		var nextString = fmt.Sprintf(" [S%d] %5s %4s", action.State, action.Symbol, moveString)
+		fmt.Println(currentString + nextString)
 
 		step++
 	}
@@ -100,7 +128,7 @@ func PrintTMStateXmlByStruct(xmlStruct TuringMachineState) {
 	// marshal (returns []byte)
 	var xmlBuf, err = xml.MarshalIndent(xmlStruct, "", "  ")
 	if err != nil {
-		fmt.Println("!! XML Marshal err: ", err)
+		fmt.Println("!! Error: XML Marshal err: ", err)
 	}
 	fmt.Println("## xml data")
 	fmt.Println(string(xmlBuf))

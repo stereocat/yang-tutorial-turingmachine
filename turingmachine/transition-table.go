@@ -40,17 +40,14 @@ type Output struct {
 
 var TransitionTable = make(map[uint16]map[string]Output)
 
-func ReadTransitionTable(xmlFileName string) string {
-	var xmlFile = os.Stdin // default
-	file, err := os.Open(xmlFileName)
+func ReadDataFile(xmlFileName string) string {
+	fmt.Println("#### File: ", xmlFileName)
+	xmlFile, err := os.Open(xmlFileName)
 	if err != nil {
-		if xmlFileName != "" {
-			fmt.Printf("!! Cannot read file:%s.\n", xmlFileName)
-			os.Exit(1)
-		} // else use stdin (default)
+		fmt.Printf("!! Error: Cannot read file:%s\n", xmlFileName)
+		os.Exit(1)
 	} else {
-		xmlFile = file
-		defer xmlFile.Close()
+		defer xmlFile.Close() // close finished readXmlFile
 	}
 	return readXmlFile(xmlFile)
 }
@@ -71,10 +68,7 @@ func readXmlFile(xmlFile *os.File) string {
 	// }
 
 	// join strings
-	var joined_line = strings.Join(lines[:], "\n")
-	// fmt.Println("## joined lines")
-	// fmt.Println(joined_line)
-	return joined_line
+	return strings.Join(lines[:], "\n")
 }
 
 func ParseTransitionTableString(xmlString string) Config {
@@ -82,7 +76,7 @@ func ParseTransitionTableString(xmlString string) Config {
 	var data = Config{}
 	// xml.Unmarshal arg must be []byte
 	if err := xml.Unmarshal([]byte(xmlString), &data); err != nil {
-		fmt.Println("!! TransitionTable XML Unmarshal error: ", err)
+		fmt.Println("!! Error: TransitionTable XML Unmarshal error: ", err)
 	}
 	return data
 }
@@ -91,15 +85,13 @@ func PrintTransitionTableXmlByStruct(xmlStruct Config) {
 	// marshal (returns []byte)
 	var xmlBuf, err = xml.MarshalIndent(xmlStruct, "", "  ")
 	if err != nil {
-		fmt.Println("!! XML Marshal err: ", err)
+		fmt.Println("!! Error: XML Marshal err: ", err)
 	}
-	fmt.Println("## xml data")
 	fmt.Println(string(xmlBuf))
 }
 
 func CreateTransitionTable(config Config) {
 	var deltaList = config.TuringMachine.TransitionFunction.DeltaList
-	fmt.Println("## in createTransitionTable")
 
 	for _, delta := range deltaList {
 		var input = delta.Input
