@@ -30,10 +30,12 @@ func main() {
 	fmt.Println("#### rpc parsed data")
 	fmt.Println(iniXmlStruct)
 
+	fmt.Println("## Initial")
 	turingmachine.PrintRpcInitXmlByStruct(iniXmlStruct)
 	turingmachine.InitializeTuringMachine(iniXmlStruct)
 	turingmachine.PrintTMStateXmlByStruct(turingmachine.TMState)
 
+	fmt.Println("## Run")
 	turingmachine.RunTuringMachine()
 	turingmachine.PrintTMStateXmlByStruct(turingmachine.TMState)
 }

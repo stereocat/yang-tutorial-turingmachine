@@ -1,16 +1,28 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!--
+    "Addition" Turing Machine
+    - Turing Machines (Stanford Encyclopedia of Philosophy)
+      https://plato.stanford.edu/entries/turing-machine/
+    - コンピュータアーキテクチャの話(108) チューリングマシン | マイナビニュース
+      https://news.mynavi.jp/article/architecture-108/
+    -->
 <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
   <turing-machine xmlns="http://example.net/turing-machine">
     <transition-function>
       <delta>
-        <label>left summand</label>
+        <label>initial/search separator</label>
         <input>
           <state>0</state>
           <symbol>1</symbol>
         </input>
+        <output>
+          <state>0</state>
+          <symbol/>
+          <head-move>right</head-move>
+        </output>
       </delta>
       <delta>
-        <label>separator</label>
+        <label>find separator</label>
         <input>
           <state>0</state>
           <symbol>0</symbol>
@@ -21,53 +33,73 @@
         </output>
       </delta>
       <delta>
-        <label>right summand</label>
+        <label>back to head</label>
         <input>
           <state>1</state>
           <symbol>1</symbol>
         </input>
-      </delta>
-      <delta>
-        <label>right end</label>
-        <input>
+        <output>
           <state>1</state>
           <symbol/>
-        </input>
-        <output>
-          <state>2</state>
           <head-move>left</head-move>
         </output>
       </delta>
       <delta>
-        <label>write separator</label>
+        <label>find head, rewind</label>
+        <input>
+          <state>1</state>
+          <symbol>0</symbol>
+        </input>
+        <output>
+          <state>2</state>
+          <symbol/>
+          <head-move>right</head-move>
+        </output>
+      </delta>
+      <delta>
+        <label>rewrite 1st cell</label>
         <input>
           <state>2</state>
+          <symbol>1</symbol>
+        </input>
+        <output>
+          <state>2</state>
+          <symbol>0</symbol>
+        </output>
+      </delta>
+      <delta>
+        <label>move to 2nd cell</label>
+        <input>
+          <state>2</state>
+          <symbol>0</symbol>
+        </input>
+        <output>
+          <state>3</state>
+          <symbol/>
+          <head-move>right</head-move>
+        </output>
+      </delta>
+      <delta>
+        <label>rewrite 2nd cell</label>
+        <input>
+          <state>3</state>
           <symbol>1</symbol>
         </input>
         <output>
           <state>3</state>
           <symbol>0</symbol>
-          <head-move>left</head-move>
         </output>
       </delta>
       <delta>
-        <label>go home</label>
+        <label>move to 3rd cell (finish)</label>
         <input>
           <state>3</state>
-          <symbol>1</symbol>
-        </input>
-        <output>
-          <head-move>left</head-move>
-        </output>
-      </delta>
-      <delta>
-        <label>final step</label>
-        <input>
-          <state>3</state>
-          <symbol/>
+          <symbol>0</symbol>
         </input>
         <output>
           <state>4</state>
+          <symbol/>
+          <head-move>right</head-move>
         </output>
       </delta>
     </transition-function>

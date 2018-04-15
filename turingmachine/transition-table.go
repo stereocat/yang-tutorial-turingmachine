@@ -118,3 +118,18 @@ func CreateTransitionTable(config Config) {
 		}
 	}
 }
+
+func GetFinishState() uint16 {
+	// in this program,
+	// it assumes state of Turing Machine start by 0
+	// and finished by max value of states.
+	var maxState uint16 = 0
+	for _, outputMap := range TransitionTable {
+		for _, output := range outputMap {
+			if output.State > maxState {
+				maxState = output.State
+			}
+		}
+	}
+	return maxState
+}

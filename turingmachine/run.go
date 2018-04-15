@@ -50,33 +50,35 @@ type Cell struct {
 var TMState TuringMachineState
 
 func RunTuringMachine() {
-	var currentSymbol = TMState.Tape.CellList[TMState.HeadPosition].Symbol
 	var step = 1
+	var finishState = GetFinishState()
 
-	for currentSymbol != "" {
+	for TMState.State != finishState {
 		// read current symbol under head-position
-		currentSymbol = TMState.Tape.CellList[TMState.HeadPosition].Symbol
+		var currentHeadPosition = TMState.HeadPosition
+		var currentSymbol = TMState.Tape.CellList[currentHeadPosition].Symbol
 		var currentState = TMState.State
 		// find next action by current state and symbol
 		var action = TransitionTable[currentState][currentSymbol]
-		// change current state
+
+		// change to next state
 		TMState.State = action.State
-		// write symbol to head-position
-		TMState.Tape.CellList[TMState.HeadPosition].Symbol = action.Symbol
-
-		fmt.Println("step: ", step)
-		fmt.Printf("  current: state:%d, symbol:%s\n", currentState, currentSymbol)
-		fmt.Printf("  action : state:%d, symbol:%s, move:%s\n", action.State, action.Symbol, action.HeadMove)
-
-		// head move
+		// write symbol to tape under head-position
+		if action.Symbol != "" {
+			TMState.Tape.CellList[currentHeadPosition].Symbol = action.Symbol
+		}
+		// move to next head position
 		switch action.HeadMove {
 		case "left":
 			TMState.HeadPosition -= 1
 		case "right":
 			TMState.HeadPosition += 1
-		default:
-			break
 		}
+
+		fmt.Println("step: ", step)
+		fmt.Printf("  current: head: %d, state:%d, symbol:%s\n", currentHeadPosition, currentState, currentSymbol)
+		fmt.Printf("  action : head: %d, state:%d, symbol:%s, move:%s\n", TMState.HeadPosition, action.State, action.Symbol, action.HeadMove)
+
 		step++
 	}
 }
@@ -84,7 +86,7 @@ func RunTuringMachine() {
 func InitializeTuringMachine(iniXmlStruct Rpc) {
 	var content = []byte(iniXmlStruct.Initialize.TapeContent) // string 2 []byte
 	TMState.State = 0
-	TMState.HeadPosition = 0
+	TMState.HeadPosition = 1 // FIX later
 	var cellList = make([]Cell, 0)
 	for coord, byteSymbol := range content {
 		var cell = Cell{Coord: coord, Symbol: string(byteSymbol)}
