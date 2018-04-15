@@ -17,18 +17,21 @@ Target: Turing Machine Implementation used in [pyang Yang Tutorial](https://gith
 $ go build yttm.go
 $ ./yttm -t turing-machine-config.xml -i turing-machine-rpc.xml
 [...]
+
 # create transition function
 input        | output
 state symbol | state symbol headmove
-    0      1 |     0           right
-    0      0 |     1      1         
-    1      1 |     1            left
-    1      0 |     2           right
-    2      1 |     2      0         
-    2      0 |     3           right
-    3      0 |     4           right
-    3      1 |     3      0         
+   S0      1 |    S0           right
+   S0      0 |    S1      1         
+   S1      1 |    S1            left
+   S1      0 |    S2           right
+   S2      1 |    S2      0         
+   S2      0 |    S3           right
+   S3      1 |    S3      0         
+   S3      0 |    S4           right
+
 [...]
+
 # Run
 Step State | Tape                           | Next Write Move
    1  [S0] |  0 |<1>| 1 | 1 | 0 | 1 | 1 | 0 | [S0]         =>
@@ -44,5 +47,7 @@ Step State | Tape                           | Next Write Move
   11  [S2] |  0 |<0>| 1 | 1 | 1 | 1 | 1 | 0 | [S3]         =>
   12  [S3] |  0 | 0 |<1>| 1 | 1 | 1 | 1 | 0 | [S3]     0     
   13  [S3] |  0 | 0 |<0>| 1 | 1 | 1 | 1 | 0 | [S4]         =>
+  14  [S4] |  0 | 0 | 0 |<1>| 1 | 1 | 1 | 0 | END
+
 [...]
 ```

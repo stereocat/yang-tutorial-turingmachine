@@ -106,7 +106,7 @@ func CreateTransitionTable(config Config) {
 	fmt.Printf("state symbol | state symbol headmove\n")
 	for inputState, outputMap := range TransitionTable {
 		for inputSymbol, output := range outputMap {
-			fmt.Printf("%5d %6s | %5d %6s %8s\n", inputState, inputSymbol, output.State, output.Symbol, output.HeadMove)
+			fmt.Printf("   S%d %6s |    S%d %6s %8s\n", inputState, inputSymbol, output.State, output.Symbol, output.HeadMove)
 		}
 	}
 }

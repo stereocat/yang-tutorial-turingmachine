@@ -49,7 +49,7 @@ type Cell struct {
 
 var TMState TuringMachineState
 
-func GetTuringMachineString(step int) string {
+func getTuringMachineString(step int) string {
 	var stateString string
 	stateString = fmt.Sprintf("%4d  [S%d] | ", step, TMState.State)
 	for i, cell := range TMState.Tape.CellList {
@@ -62,59 +62,67 @@ func GetTuringMachineString(step int) string {
 	return stateString
 }
 
+func setNextState(action Output) {
+	// change to next state
+	TMState.State = action.State
+	// write symbol to tape under head-position
+	if action.Symbol != "" {
+		TMState.Tape.CellList[TMState.HeadPosition].Symbol = action.Symbol
+	}
+}
+
+func setNextHeadPosition(action Output) {
+	// move to next head position
+	switch action.HeadMove {
+	case "left":
+		TMState.HeadPosition -= 1
+	case "right":
+		TMState.HeadPosition += 1
+	}
+}
+
+func getNextActionString(action Output) string {
+	var moveString string
+	switch action.HeadMove {
+	case "left":
+		moveString = "<= "
+	case "right":
+		moveString = " =>"
+	}
+	return fmt.Sprintf(" [S%d] %5s %4s", action.State, action.Symbol, moveString)
+}
+
 func RunTuringMachine() {
 	var step = 1
 	var finishState = GetFinishState()
 
 	// header
-	var indent = len([]byte(GetTuringMachineString(step))) - 20
+	var indent = len([]byte(getTuringMachineString(step))) - 20 // offset
 	var headerString = fmt.Sprintf("Step State | Tape %%%ds | Next Write Move\n", indent)
 	fmt.Printf(headerString, " ")
 
 	// Run
 	for TMState.State != finishState {
-		var currentString = GetTuringMachineString(step)
-
+		var currentString = getTuringMachineString(step)
 		// read current symbol under head-position
-		var currentHeadPosition = TMState.HeadPosition
-		var currentSymbol = TMState.Tape.CellList[currentHeadPosition].Symbol
-		var currentState = TMState.State
+		var currentSymbol = TMState.Tape.CellList[TMState.HeadPosition].Symbol
 		// find next action by current state and symbol
-		var action = TransitionTable[currentState][currentSymbol]
-
-		// change to next state
-		TMState.State = action.State
-		// write symbol to tape under head-position
-		if action.Symbol != "" {
-			TMState.Tape.CellList[currentHeadPosition].Symbol = action.Symbol
-		}
-
-		// move to next head position
-		switch action.HeadMove {
-		case "left":
-			TMState.HeadPosition -= 1
-		case "right":
-			TMState.HeadPosition += 1
-		}
-
-		var moveString string
-		switch action.HeadMove {
-		case "left":
-			moveString = "<= "
-		case "right":
-			moveString = " =>"
-		}
-		var nextString = fmt.Sprintf(" [S%d] %5s %4s", action.State, action.Symbol, moveString)
-		fmt.Println(currentString + nextString)
+		var action = TransitionTable[TMState.State][currentSymbol]
+		// change state and head-position
+		setNextState(action)
+		setNextHeadPosition(action)
+        // print step
+		fmt.Println(currentString + getNextActionString(action))
 
 		step++
 	}
+    fmt.Println(getTuringMachineString(step) + " END")
 }
 
 func InitializeTuringMachine(iniXmlStruct Rpc) {
 	var content = []byte(iniXmlStruct.Initialize.TapeContent) // string 2 []byte
 	TMState.State = 0
-	TMState.HeadPosition = 1 // FIX later
+	TMState.HeadPosition = 1
 	var cellList = make([]Cell, 0)
 	for coord, byteSymbol := range content {
 		var cell = Cell{Coord: coord, Symbol: string(byteSymbol)}
