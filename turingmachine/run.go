@@ -14,24 +14,6 @@ type Initialize struct {
 	TapeContent string   `xml:"tape-content"`
 }
 
-func ParseRpcInitializeString(xmlString string) Rpc {
-	var data = Rpc{}
-	if err := xml.Unmarshal([]byte(xmlString), &data); err != nil {
-		fmt.Println("!! Error: RPC initialize XML Unmarshal error: ", err)
-	}
-	return data
-}
-
-func PrintRpcInitXmlByStruct(xmlStruct Rpc) {
-	// marshal (returns []byte)
-	var xmlBuf, err = xml.MarshalIndent(xmlStruct, "", "  ")
-	if err != nil {
-		fmt.Println("!! Error: XML Marshal err: ", err)
-	}
-	fmt.Println("## xml data")
-	fmt.Println(string(xmlBuf))
-}
-
 type TuringMachineState struct {
 	XMLName            xml.Name           `xml:"turing-machine"`
 	State              uint16             `xml:"state"`
@@ -47,7 +29,33 @@ type Cell struct {
 	Symbol string `xml:"symbol"`
 }
 
+var rpcInitString string
+var rpcInitStruct Rpc
 var TMState TuringMachineState
+
+func ReadRpcInitFromFile(xmlFileName string) {
+	// construct turing machine state
+	rpcInitString = readXmlString(xmlFileName)
+	parseRpcInitString()
+	initializeTuringMachine()
+}
+
+func parseRpcInitString() {
+	// unmarshal (parse); xml.Unmarshal arg must be []byte
+	if err := xml.Unmarshal([]byte(rpcInitString), &rpcInitStruct); err != nil {
+		fmt.Println("!! Error: RPC initialize XML Unmarshal error: ", err)
+	}
+}
+
+func PrintRpcInitXmlByStruct(xmlStruct Rpc) {
+	// marshal (returns []byte)
+	var xmlBuf, err = xml.MarshalIndent(xmlStruct, "", "  ")
+	if err != nil {
+		fmt.Println("!! Error: XML Marshal err: ", err)
+	}
+	fmt.Println("## xml data")
+	fmt.Println(string(xmlBuf))
+}
 
 func getTuringMachineString(step int) string {
 	var stateString string
@@ -111,16 +119,16 @@ func RunTuringMachine() {
 		// change state and head-position
 		setNextState(action)
 		setNextHeadPosition(action)
-        // print step
+		// print step
 		fmt.Println(currentString + getNextActionString(action))
 
 		step++
 	}
-    fmt.Println(getTuringMachineString(step) + " END")
+	fmt.Println(getTuringMachineString(step) + " END")
 }
 
-func InitializeTuringMachine(iniXmlStruct Rpc) {
-	var content = []byte(iniXmlStruct.Initialize.TapeContent) // string 2 []byte
+func initializeTuringMachine() {
+	var content = []byte(rpcInitStruct.Initialize.TapeContent) // string 2 []byte
 	TMState.State = 0
 	TMState.HeadPosition = 1
 	var cellList = make([]Cell, 0)
@@ -132,9 +140,9 @@ func InitializeTuringMachine(iniXmlStruct Rpc) {
 	// TMState.TransitionFunction = TransitionTable // TBA
 }
 
-func PrintTMStateXmlByStruct(xmlStruct TuringMachineState) {
+func PrintTMStateXml() {
 	// marshal (returns []byte)
-	var xmlBuf, err = xml.MarshalIndent(xmlStruct, "", "  ")
+	var xmlBuf, err = xml.MarshalIndent(TMState, "", "  ")
 	if err != nil {
 		fmt.Println("!! Error: XML Marshal err: ", err)
 	}

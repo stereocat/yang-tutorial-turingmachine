@@ -38,9 +38,18 @@ type Output struct {
 	HeadMove string `xml:"head-move"`
 }
 
+var transitionTableString string
+var transitionTableStruct Config
 var TransitionTable = make(map[uint16]map[string]Output)
 
-func ReadDataFile(xmlFileName string) string {
+func ReadTransitionTableFromFile(xmlFileName string) {
+	// construct transition table
+	transitionTableString = readXmlString(xmlFileName)
+	parseTransitionTableString()
+	createTransitionTable()
+}
+
+func readXmlString(xmlFileName string) string {
 	fmt.Println("#### File: ", xmlFileName)
 	xmlFile, err := os.Open(xmlFileName)
 	if err != nil {
@@ -55,30 +64,19 @@ func ReadDataFile(xmlFileName string) string {
 func readXmlFile(xmlFile *os.File) string {
 	// read data from file
 	var scanner = bufio.NewScanner(xmlFile)
-	var lines = make([]string, 0)
+	var lines = make([]string, 0) // multiple lines
 	for scanner.Scan() {
 		var line = scanner.Text()
 		lines = append(lines, line)
 	}
-
-	// // print lines
-	// fmt.Println("## lines")
-	// for i, line := range lines {
-	// 	fmt.Printf("%2d: %s\n", i + 1, line)
-	// }
-
-	// join strings
-	return strings.Join(lines[:], "\n")
+	return strings.Join(lines[:], "\n") // convert to single line
 }
 
-func ParseTransitionTableString(xmlString string) Config {
-	// unmarshal (parse)
-	var data = Config{}
-	// xml.Unmarshal arg must be []byte
-	if err := xml.Unmarshal([]byte(xmlString), &data); err != nil {
+func parseTransitionTableString() {
+	// unmarshal (parse); xml.Unmarshal arg must be []byte
+	if err := xml.Unmarshal([]byte(transitionTableString), &transitionTableStruct); err != nil {
 		fmt.Println("!! Error: TransitionTable XML Unmarshal error: ", err)
 	}
-	return data
 }
 
 func PrintTransitionTableXmlByStruct(xmlStruct Config) {
@@ -90,8 +88,8 @@ func PrintTransitionTableXmlByStruct(xmlStruct Config) {
 	fmt.Println(string(xmlBuf))
 }
 
-func CreateTransitionTable(config Config) {
-	var deltaList = config.TuringMachine.TransitionFunction.DeltaList
+func createTransitionTable() {
+	var deltaList = transitionTableStruct.TuringMachine.TransitionFunction.DeltaList
 
 	for _, delta := range deltaList {
 		var input = delta.Input
