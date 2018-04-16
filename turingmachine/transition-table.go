@@ -44,12 +44,20 @@ var transitionTableStruct *Config // pointer to rewite self
 type TTF map[uint16]map[string]Output // transition table function
 var TransitionTable TTF
 
+// construct transition table
 func ReadTransitionTableFromFile(xmlFileName string) {
-	// construct transition table
-	transitionTableString = readXmlString(xmlFileName)
+	ReadTransitionTableFromString(readXmlString(xmlFileName))
+	TransitionTable.PrintTable()
+}
+
+// construct transition table
+func ReadTransitionTableFromString(xmlString string) {
+	transitionTableString = xmlString
 	transitionTableStruct = newConfig()
 	transitionTableStruct.printXml()
 	TransitionTable = newTTF()
+	// change operation state
+	doneTransitionTable()
 }
 
 func readXmlString(xmlFileName string) string {
@@ -76,12 +84,12 @@ func readXmlFile(xmlFile *os.File) string {
 }
 
 func newConfig() *Config {
-    var tts = new(Config) // transition table struct
+	var tts = new(Config) // transition table struct
 	// unmarshal (parse); xml.Unmarshal arg must be []byte
 	if err := xml.Unmarshal([]byte(transitionTableString), tts); err != nil {
 		fmt.Println("!! Error: TransitionTable XML Unmarshal error: ", err)
 	}
-    return tts
+	return tts
 }
 
 func (tts *Config) printXml() {
@@ -95,7 +103,7 @@ func (tts *Config) printXml() {
 
 func newTTF() TTF {
 	var deltaList = transitionTableStruct.TuringMachine.TransitionFunction.DeltaList
-    var transitionTable = make(TTF)
+	var transitionTable = make(TTF)
 
 	for _, delta := range deltaList {
 		var input = delta.Input
@@ -106,6 +114,10 @@ func newTTF() TTF {
 		transitionTable[input.State][input.Symbol] = output
 	}
 
+	return transitionTable
+}
+
+func (transitionTable TTF) PrintTable() {
 	fmt.Printf("input        | output\n")
 	fmt.Printf("state symbol | state symbol headmove\n")
 	for inputState, outputMap := range transitionTable {
@@ -113,7 +125,6 @@ func newTTF() TTF {
 			fmt.Printf("   S%d %6s |    S%d %6s %8s\n", inputState, inputSymbol, output.State, output.Symbol, output.HeadMove)
 		}
 	}
-    return transitionTable
 }
 
 func (transitionTable TTF) GetFinishState() uint16 {

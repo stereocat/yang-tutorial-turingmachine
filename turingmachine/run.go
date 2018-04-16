@@ -33,20 +33,27 @@ var rpcInitString string
 var rpcInitStruct *Rpc
 var TMState *TuringMachineState
 
+// construct turing machine state
 func ReadRpcInitFromFile(xmlFileName string) {
-	// construct turing machine state
-	rpcInitString = readXmlString(xmlFileName)
+	ReadRpcInitFromString(readXmlString(xmlFileName))
+}
+
+// construct turing machine state
+func ReadRpcInitFromString(xmlString string) {
+	rpcInitString = xmlString
 	rpcInitStruct = newRpc()
 	TMState = newTuringMachineState()
+	// change operation state
+	doneTapeInitialize()
 }
 
 func newRpc() *Rpc {
-    var ris = new(Rpc)
+	var ris = new(Rpc)
 	// unmarshal (parse); xml.Unmarshal arg must be []byte
 	if err := xml.Unmarshal([]byte(rpcInitString), ris); err != nil {
 		fmt.Println("!! Error: RPC initialize XML Unmarshal error: ", err)
 	}
-    return ris
+	return ris
 }
 
 func (ris *Rpc) PrintXml() {
@@ -56,6 +63,10 @@ func (ris *Rpc) PrintXml() {
 		fmt.Println("!! Error: XML Marshal err: ", err)
 	}
 	fmt.Println(string(xmlBuf))
+}
+
+func (tmState *TuringMachineState) Print() {
+	fmt.Println(tmState.toString(0))
 }
 
 func (tmState *TuringMachineState) toString(step int) string {
@@ -128,7 +139,7 @@ func (tmState *TuringMachineState) Run() {
 }
 
 func newTuringMachineState() *TuringMachineState {
-    var tmState = new(TuringMachineState)
+	var tmState = new(TuringMachineState)
 	var content = []byte(rpcInitStruct.Initialize.TapeContent) // string 2 []byte
 	tmState.State = 0
 	tmState.HeadPosition = 1
@@ -139,7 +150,7 @@ func newTuringMachineState() *TuringMachineState {
 	}
 	tmState.Tape = Tape{CellList: cellList}
 	// *tmState.TransitionFunction = TransitionTable // TBA
-    return tmState
+	return tmState
 }
 
 func (tmState *TuringMachineState) PrintXml() {
