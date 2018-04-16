@@ -40,13 +40,16 @@ type Output struct {
 
 var transitionTableString string
 var transitionTableStruct Config
-var TransitionTable = make(map[uint16]map[string]Output)
+
+type TTF map[uint16]map[string]Output // transition table function
+var TransitionTable = make(TTF)
 
 func ReadTransitionTableFromFile(xmlFileName string) {
 	// construct transition table
 	transitionTableString = readXmlString(xmlFileName)
-	parseTransitionTableString()
-	createTransitionTable()
+	(&transitionTableStruct).new() // pointer to rewrite self
+	transitionTableStruct.printXml()
+	TransitionTable.new()
 }
 
 func readXmlString(xmlFileName string) string {
@@ -72,49 +75,49 @@ func readXmlFile(xmlFile *os.File) string {
 	return strings.Join(lines[:], "\n") // convert to single line
 }
 
-func parseTransitionTableString() {
+func (ttsPtr *Config) new() { // pointer to rewrite self
 	// unmarshal (parse); xml.Unmarshal arg must be []byte
-	if err := xml.Unmarshal([]byte(transitionTableString), &transitionTableStruct); err != nil {
+	if err := xml.Unmarshal([]byte(transitionTableString), ttsPtr); err != nil {
 		fmt.Println("!! Error: TransitionTable XML Unmarshal error: ", err)
 	}
 }
 
-func PrintTransitionTableXmlByStruct(xmlStruct Config) {
+func (tts Config) printXml() {
 	// marshal (returns []byte)
-	var xmlBuf, err = xml.MarshalIndent(xmlStruct, "", "  ")
+	var xmlBuf, err = xml.MarshalIndent(tts, "", "  ")
 	if err != nil {
 		fmt.Println("!! Error: XML Marshal err: ", err)
 	}
 	fmt.Println(string(xmlBuf))
 }
 
-func createTransitionTable() {
+func (transitionTable TTF) new() {
 	var deltaList = transitionTableStruct.TuringMachine.TransitionFunction.DeltaList
 
 	for _, delta := range deltaList {
 		var input = delta.Input
 		var output = delta.Output
-		if TransitionTable[input.State] == nil {
-			TransitionTable[input.State] = make(map[string]Output)
+		if transitionTable[input.State] == nil {
+			transitionTable[input.State] = make(map[string]Output)
 		}
-		TransitionTable[input.State][input.Symbol] = output
+		transitionTable[input.State][input.Symbol] = output
 	}
 
 	fmt.Printf("input        | output\n")
 	fmt.Printf("state symbol | state symbol headmove\n")
-	for inputState, outputMap := range TransitionTable {
+	for inputState, outputMap := range transitionTable {
 		for inputSymbol, output := range outputMap {
 			fmt.Printf("   S%d %6s |    S%d %6s %8s\n", inputState, inputSymbol, output.State, output.Symbol, output.HeadMove)
 		}
 	}
 }
 
-func GetFinishState() uint16 {
+func (transitionTable TTF) GetFinishState() uint16 {
 	// in this program,
 	// it assumes state of Turing Machine start by 0
 	// and finished by max value of states.
 	var maxState uint16 = 0
-	for _, outputMap := range TransitionTable {
+	for _, outputMap := range transitionTable {
 		for _, output := range outputMap {
 			if output.State > maxState {
 				maxState = output.State

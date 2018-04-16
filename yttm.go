@@ -15,15 +15,14 @@ var (
 func main() {
 	flag.Parse()
 
-	// read data(xml) files as []string (line-by-line)
 	fmt.Println("# Read data files")
 	turingmachine.ReadTransitionTableFromFile(*transitionFunctionFileOpt)
 	turingmachine.ReadRpcInitFromFile(*initializeFileOpt)
 
 	fmt.Println("# Initialize Turing Machine")
-	turingmachine.PrintTMStateXml()
+	turingmachine.TMState.PrintXml()
 
 	fmt.Println("# Run")
-	turingmachine.RunTuringMachine()
-	turingmachine.PrintTMStateXml()
+	turingmachine.TMState.Run()
+	turingmachine.TMState.PrintXml()
 }

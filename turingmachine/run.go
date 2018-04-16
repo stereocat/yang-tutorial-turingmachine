@@ -36,32 +36,31 @@ var TMState TuringMachineState
 func ReadRpcInitFromFile(xmlFileName string) {
 	// construct turing machine state
 	rpcInitString = readXmlString(xmlFileName)
-	parseRpcInitString()
-	initializeTuringMachine()
+	(&rpcInitStruct).new() // rewrite self
+	(&TMState).new()
 }
 
-func parseRpcInitString() {
+func (rpcInitPtr *Rpc) new() { // pointer to rewrite self
 	// unmarshal (parse); xml.Unmarshal arg must be []byte
-	if err := xml.Unmarshal([]byte(rpcInitString), &rpcInitStruct); err != nil {
+	if err := xml.Unmarshal([]byte(rpcInitString), rpcInitPtr); err != nil {
 		fmt.Println("!! Error: RPC initialize XML Unmarshal error: ", err)
 	}
 }
 
-func PrintRpcInitXmlByStruct(xmlStruct Rpc) {
+func (ris Rpc) PrintXml() {
 	// marshal (returns []byte)
-	var xmlBuf, err = xml.MarshalIndent(xmlStruct, "", "  ")
+	var xmlBuf, err = xml.MarshalIndent(ris, "", "  ")
 	if err != nil {
 		fmt.Println("!! Error: XML Marshal err: ", err)
 	}
-	fmt.Println("## xml data")
 	fmt.Println(string(xmlBuf))
 }
 
-func getTuringMachineString(step int) string {
+func (tmState TuringMachineState) toString(step int) string {
 	var stateString string
-	stateString = fmt.Sprintf("%4d  [S%d] | ", step, TMState.State)
-	for i, cell := range TMState.Tape.CellList {
-		if i == int(TMState.HeadPosition) {
+	stateString = fmt.Sprintf("%4d  [S%d] | ", step, tmState.State)
+	for i, cell := range tmState.Tape.CellList {
+		if i == int(tmState.HeadPosition) {
 			stateString += fmt.Sprintf("<%s>|", cell.Symbol)
 		} else {
 			stateString += fmt.Sprintf(" %s |", cell.Symbol)
@@ -70,26 +69,26 @@ func getTuringMachineString(step int) string {
 	return stateString
 }
 
-func setNextState(action Output) {
+func (tmsPtr *TuringMachineState) setState(action Output) {
 	// change to next state
-	TMState.State = action.State
+	tmsPtr.State = action.State
 	// write symbol to tape under head-position
 	if action.Symbol != "" {
-		TMState.Tape.CellList[TMState.HeadPosition].Symbol = action.Symbol
+		tmsPtr.Tape.CellList[tmsPtr.HeadPosition].Symbol = action.Symbol
 	}
 }
 
-func setNextHeadPosition(action Output) {
+func (tmsPtr *TuringMachineState) setHeadPosition(action Output) {
 	// move to next head position
 	switch action.HeadMove {
 	case "left":
-		TMState.HeadPosition -= 1
+		tmsPtr.HeadPosition -= 1
 	case "right":
-		TMState.HeadPosition += 1
+		tmsPtr.HeadPosition += 1
 	}
 }
 
-func getNextActionString(action Output) string {
+func (action Output) toString() string {
 	var moveString string
 	switch action.HeadMove {
 	case "left":
@@ -100,52 +99,50 @@ func getNextActionString(action Output) string {
 	return fmt.Sprintf(" [S%d] %5s %4s", action.State, action.Symbol, moveString)
 }
 
-func RunTuringMachine() {
+func (tmState TuringMachineState) Run() {
 	var step = 1
-	var finishState = GetFinishState()
+	var finishState = TransitionTable.GetFinishState()
 
 	// header
-	var indent = len([]byte(getTuringMachineString(step))) - 20 // offset
+	var indent = len([]byte(tmState.toString(step))) - 20 // offset
 	var headerString = fmt.Sprintf("Step State | Tape %%%ds | Next Write Move\n", indent)
 	fmt.Printf(headerString, " ")
 
 	// Run
-	for TMState.State != finishState {
-		var currentString = getTuringMachineString(step)
+	for tmState.State != finishState {
+		var currentString = tmState.toString(step)
 		// read current symbol under head-position
-		var currentSymbol = TMState.Tape.CellList[TMState.HeadPosition].Symbol
+		var currentSymbol = tmState.Tape.CellList[tmState.HeadPosition].Symbol
 		// find next action by current state and symbol
-		var action = TransitionTable[TMState.State][currentSymbol]
-		// change state and head-position
-		setNextState(action)
-		setNextHeadPosition(action)
+		var action = TransitionTable[tmState.State][currentSymbol]
 		// print step
-		fmt.Println(currentString + getNextActionString(action))
-
+		fmt.Println(currentString + action.toString())
+		// Go to Next: change state and head-position
+		(&tmState).setState(action)
+		(&tmState).setHeadPosition(action)
 		step++
 	}
-	fmt.Println(getTuringMachineString(step) + " END")
+	fmt.Println(tmState.toString(step) + " END")
 }
 
-func initializeTuringMachine() {
+func (tmsPtr *TuringMachineState) new() {
 	var content = []byte(rpcInitStruct.Initialize.TapeContent) // string 2 []byte
-	TMState.State = 0
-	TMState.HeadPosition = 1
+	tmsPtr.State = 0
+	tmsPtr.HeadPosition = 1
 	var cellList = make([]Cell, 0)
 	for coord, byteSymbol := range content {
 		var cell = Cell{Coord: coord, Symbol: string(byteSymbol)}
 		cellList = append(cellList, cell)
 	}
-	TMState.Tape = Tape{CellList: cellList}
-	// TMState.TransitionFunction = TransitionTable // TBA
+	tmsPtr.Tape = Tape{CellList: cellList}
+	// *tmsPtr.TransitionFunction = TransitionTable // TBA
 }
 
-func PrintTMStateXml() {
+func (tmState TuringMachineState) PrintXml() {
 	// marshal (returns []byte)
-	var xmlBuf, err = xml.MarshalIndent(TMState, "", "  ")
+	var xmlBuf, err = xml.MarshalIndent(tmState, "", "  ")
 	if err != nil {
 		fmt.Println("!! Error: XML Marshal err: ", err)
 	}
-	fmt.Println("## xml data")
 	fmt.Println(string(xmlBuf))
 }
