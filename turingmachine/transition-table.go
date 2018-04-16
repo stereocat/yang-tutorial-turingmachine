@@ -39,17 +39,17 @@ type Output struct {
 }
 
 var transitionTableString string
-var transitionTableStruct Config
-
+var transitionTableStruct *Config // pointer to rewite self
+// Note: TTF can operate same as pointer, map is reference like slice
 type TTF map[uint16]map[string]Output // transition table function
-var TransitionTable = make(TTF)
+var TransitionTable TTF
 
 func ReadTransitionTableFromFile(xmlFileName string) {
 	// construct transition table
 	transitionTableString = readXmlString(xmlFileName)
-	(&transitionTableStruct).new() // pointer to rewrite self
+	transitionTableStruct = newConfig()
 	transitionTableStruct.printXml()
-	TransitionTable.new()
+	TransitionTable = newTTF()
 }
 
 func readXmlString(xmlFileName string) string {
@@ -75,14 +75,16 @@ func readXmlFile(xmlFile *os.File) string {
 	return strings.Join(lines[:], "\n") // convert to single line
 }
 
-func (ttsPtr *Config) new() { // pointer to rewrite self
+func newConfig() *Config {
+    var tts = new(Config) // transition table struct
 	// unmarshal (parse); xml.Unmarshal arg must be []byte
-	if err := xml.Unmarshal([]byte(transitionTableString), ttsPtr); err != nil {
+	if err := xml.Unmarshal([]byte(transitionTableString), tts); err != nil {
 		fmt.Println("!! Error: TransitionTable XML Unmarshal error: ", err)
 	}
+    return tts
 }
 
-func (tts Config) printXml() {
+func (tts *Config) printXml() {
 	// marshal (returns []byte)
 	var xmlBuf, err = xml.MarshalIndent(tts, "", "  ")
 	if err != nil {
@@ -91,8 +93,9 @@ func (tts Config) printXml() {
 	fmt.Println(string(xmlBuf))
 }
 
-func (transitionTable TTF) new() {
+func newTTF() TTF {
 	var deltaList = transitionTableStruct.TuringMachine.TransitionFunction.DeltaList
+    var transitionTable = make(TTF)
 
 	for _, delta := range deltaList {
 		var input = delta.Input
@@ -110,6 +113,7 @@ func (transitionTable TTF) new() {
 			fmt.Printf("   S%d %6s |    S%d %6s %8s\n", inputState, inputSymbol, output.State, output.Symbol, output.HeadMove)
 		}
 	}
+    return transitionTable
 }
 
 func (transitionTable TTF) GetFinishState() uint16 {
