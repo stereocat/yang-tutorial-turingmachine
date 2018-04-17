@@ -68,11 +68,11 @@ func Start() {
 }
 
 func run(_ string) {
-    if turingmachine.EnableToRun() {
-        turingmachine.TMState.Run()
-    } else {
-        fmt.Println("!! Error: Transition table and/or Tape does not initialized.")
-    }
+	if turingmachine.EnableToRun() {
+		turingmachine.TMState.Run()
+	} else {
+		fmt.Println("!! Error: Transition table and/or Tape does not initialized.")
+	}
 }
 
 func readTtfXml(_ string) {
@@ -87,7 +87,7 @@ func readXmlStringFromStdin() string {
 	var line string
 	var lines = make([]string, 0) // multiple lines
 
-    fmt.Println("# Paste XML data and \"EOF\"[RETURN] to finish input")
+	fmt.Println("# Paste XML data and \"EOF\"[RETURN] to finish input")
 	for scanner.Scan() && line != "EOF" {
 		line = scanner.Text()
 		lines = append(lines, line)
@@ -96,19 +96,19 @@ func readXmlStringFromStdin() string {
 }
 
 func printState(_ string) {
-    fmt.Println("# Transition Table")
-    if turingmachine.HasTransitionTable() {
-        turingmachine.TransitionTable.PrintTable()
-    } else {
-        fmt.Println("## Transition Table does not initialized")
-    }
+	fmt.Println("# Transition Table")
+	if turingmachine.HasTransitionTable() {
+		turingmachine.TransitionTable.PrintTable()
+	} else {
+		fmt.Println("## Transition Table does not initialized")
+	}
 
-    fmt.Println("# Tape")
-    if turingmachine.HasTape() {
-        turingmachine.TMState.Print()
-    } else {
-        fmt.Println("## Tape does not initialized")
-    }
+	fmt.Println("# Tape")
+	if turingmachine.HasTape() {
+		turingmachine.TMState.Print()
+	} else {
+		fmt.Println("## Tape does not initialized")
+	}
 }
 
 func printCommandHelp(_ string) {

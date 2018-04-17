@@ -42,6 +42,9 @@ func ReadRpcInitFromFile(xmlFileName string) {
 func ReadRpcInitFromString(xmlString string) {
 	rpcInitString = xmlString
 	rpcInitStruct = newRpc()
+	if verbose {
+		rpcInitStruct.PrintXml()
+	}
 	TMState = newTuringMachineState()
 	// change operation state
 	doneTapeInitialize()

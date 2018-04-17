@@ -29,3 +29,9 @@ func HasTape() bool {
 func EnableToRun() bool {
 	return opState.HasTtfData && opState.HasTapeData
 }
+
+var verbose = false
+
+func SetVerbose(v bool) {
+	verbose = v
+}

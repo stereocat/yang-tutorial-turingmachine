@@ -47,14 +47,18 @@ var TransitionTable TTF
 // construct transition table
 func ReadTransitionTableFromFile(xmlFileName string) {
 	ReadTransitionTableFromString(readXmlString(xmlFileName))
-	TransitionTable.PrintTable()
+	if verbose {
+		TransitionTable.PrintTable()
+	}
 }
 
 // construct transition table
 func ReadTransitionTableFromString(xmlString string) {
 	transitionTableString = xmlString
 	transitionTableStruct = newConfig()
-	transitionTableStruct.printXml()
+	if verbose {
+		transitionTableStruct.printXml()
+	}
 	TransitionTable = newTTF()
 	// change operation state
 	doneTransitionTable()
