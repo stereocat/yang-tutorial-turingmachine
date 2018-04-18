@@ -36,6 +36,6 @@ func main() {
 		turingmachine.TMState.PrintXml()
 		fmt.Println("# Run")
 		turingmachine.TMState.Run()
-		turingmachine.TMState.PrintXml()
+		turingmachine.GetConfig().PrintXml()
 	}
 }

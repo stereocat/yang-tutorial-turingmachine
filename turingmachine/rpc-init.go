@@ -19,6 +19,7 @@ type Initialize struct {
 
 var rpcInitString string
 var rpcInitStruct *RpcInit
+var messageId int
 
 // construct turing machine state
 func ReadRpcInitFromFile(xmlFileName string) {
@@ -29,6 +30,7 @@ func ReadRpcInitFromFile(xmlFileName string) {
 func ReadRpcInitFromString(xmlString string) {
 	rpcInitString = xmlString
 	rpcInitStruct = newRpcInit()
+	messageId = rpcInitStruct.MessageId
 	if verbose {
 		rpcInitStruct.PrintXml()
 	}

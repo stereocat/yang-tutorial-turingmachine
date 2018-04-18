@@ -71,21 +71,25 @@ func (action Output) toString() string {
 }
 
 func (tmState *TuringMachineState) Run() *Notification {
-	var step = 1
-	var finishState = TransitionTable.GetFinishState()
-
-	// header
-	var indent = len([]byte(tmState.toString(step))) - 20 // offset
-	var headerString = fmt.Sprintf("Step State | Tape %%%ds | Next Write Move\n", indent)
+	var (
+		step        = 1
+		finishState = TransitionTable.GetFinishState()
+		// header
+		indent       = len([]byte(tmState.toString(step))) - 20 // offset
+		headerString = fmt.Sprintf("Step State | Tape %%%ds | Next Write Move\n", indent)
+	)
 	fmt.Printf(headerString, " ")
 
 	// Run
 	for tmState.State != finishState {
-		var currentString = tmState.toString(step)
-		// read current symbol under head-position
-		var currentSymbol = tmState.Tape.CellList[tmState.HeadPosition].Symbol
-		// find next action by current state and symbol
-		var action = TransitionTable[tmState.State][currentSymbol]
+		var (
+			// current Turing Machine state
+			currentString = tmState.toString(step)
+			// read symbol under head-position
+			currentSymbol = tmState.Tape.CellList[tmState.HeadPosition].Symbol
+			// find next action by current state and symbol
+			action = TransitionTable[tmState.State][currentSymbol]
+		)
 		// print step
 		fmt.Println(currentString + action.toString())
 		// Go to Next: change state and head-position
@@ -99,19 +103,21 @@ func (tmState *TuringMachineState) Run() *Notification {
 }
 
 func newTuringMachineState() *TuringMachineState {
-	var tmState = new(TuringMachineState)
-	var content = []byte(rpcInitStruct.Initialize.TapeContent) // string 2 []byte
-	tmState.State = 0
-	tmState.HeadPosition = 1
-	tmState.Xmlns = "http://example.net/turing-machine"
-	var cellList = make([]Cell, 0)
+	var (
+		content  = []byte(rpcInitStruct.Initialize.TapeContent) // string 2 []byte
+		cellList = make([]Cell, 0)
+	)
 	for coord, byteSymbol := range content {
 		var cell = Cell{Coord: coord, Symbol: string(byteSymbol)}
 		cellList = append(cellList, cell)
 	}
-	tmState.Tape = Tape{CellList: cellList}
-	// *tmState.TransitionFunction = TransitionTable // TBA
-	return tmState
+	return &TuringMachineState{
+		State:              0,
+		HeadPosition:       1,
+		Xmlns:              "http://example.net/turing-machine",
+		Tape:               Tape{CellList: cellList},
+		TransitionFunction: transitionTableStruct.TuringMachine.TransitionFunction,
+	}
 }
 
 func (tmState *TuringMachineState) PrintXml() {

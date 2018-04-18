@@ -45,6 +45,10 @@ func newCommandMap() CommandMap {
 		Description: "Run Turing Machine",
 		Action:      run,
 	}
+	ct["get"] = CommandDef{
+		Description: "Get Turing Machine State and Config",
+		Action:      get,
+	}
 	return ct
 }
 
@@ -74,6 +78,10 @@ func run(_ string) {
 	} else {
 		fmt.Println("!! Error: Transition table and/or Tape does not initialized.")
 	}
+}
+
+func get(_ string) {
+	turingmachine.GetConfig().PrintXml()
 }
 
 func readTtfXml(_ string) {
