@@ -69,7 +69,8 @@ func Start() {
 
 func run(_ string) {
 	if turingmachine.EnableToRun() {
-		turingmachine.TMState.Run()
+		var notify = turingmachine.TMState.Run()
+		notify.PrintXml()
 	} else {
 		fmt.Println("!! Error: Transition table and/or Tape does not initialized.")
 	}

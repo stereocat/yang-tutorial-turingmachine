@@ -10,32 +10,34 @@ import (
 
 type Config struct {
 	XMLName       xml.Name            `xml:"config"`
+	Xmlns         string              `xml:"xmlns,attr"`
 	TuringMachine TuringMachineConfig `xml:"turing-machine"`
 }
 type TuringMachineConfig struct {
-	// XMLName xml.Name `xml:"turing-machine"`
+	XMLName            xml.Name           `xml:"turing-machine"`
+	Xmlns              string             `xml:"xmlns,attr"`
 	TransitionFunction TransitionFunction `xml:"transition-function"`
 }
 type TransitionFunction struct {
-	// XMLName xml.Name `xml:"transition-function"`
-	DeltaList []Delta `xml:"delta"`
+	XMLName   xml.Name `xml:"transition-function"`
+	DeltaList []Delta  `xml:"delta"`
 }
 type Delta struct {
-	// XMLName xml.Name `xml:"delta"`
-	Label  string `xml:"label"`
-	Input  Input  `xml:"input"`
-	Output Output `xml:"output"`
+	XMLName xml.Name `xml:"delta"`
+	Label   string   `xml:"label"`
+	Input   Input    `xml:"input"`
+	Output  Output   `xml:"output"`
 }
 type Input struct {
-	// XMLName xml.Name `xml:"input"`
-	State  uint16 `xml:"state"`
-	Symbol string `xml:"symbol"`
+	XMLName xml.Name `xml:"input"`
+	State   uint16   `xml:"state"`
+	Symbol  string   `xml:"symbol"`
 }
 type Output struct {
-	// XMLName xml.Name `xml:"output"`
-	State    uint16 `xml:"state"`
-	Symbol   string `xml:"symbol"`
-	HeadMove string `xml:"head-move"`
+	XMLName  xml.Name `xml:"output"`
+	State    uint16   `xml:"state"`
+	Symbol   string   `xml:"symbol"`
+	HeadMove string   `xml:"head-move"`
 }
 
 var transitionTableString string

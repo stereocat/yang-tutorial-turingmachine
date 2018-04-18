@@ -1,13 +1,21 @@
 SHELL := /bin/bash
 TARGET := yttm
-.DEFAULT_GOAL := $(TARGET)
 SRC := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
-$(TARGET): $(SRC)
-	@go build -o $(TARGET)
+GOCMD := go
+GOBUILD := $(GOCMD) build
+GOCLEAN := $(GOCMD) clean
+GOFMT := gofmt
 
-clean:
-	@rm $(TARGET)
+all: fmt build
+
+build: $(SRC)
+	$(GOBUILD) -o $(TARGET)
 
 fmt:
-	@gofmt -l -w -e $(SRC)
+	$(GOFMT) -l -w -e $(SRC)
+
+clean:
+	$(GOCLEAN)
+	@rm $(TARGET) $(find . -type f -name "*~")
+

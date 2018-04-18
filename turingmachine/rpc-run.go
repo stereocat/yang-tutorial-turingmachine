@@ -5,17 +5,9 @@ import (
 	"fmt"
 )
 
-type Rpc struct {
-	XMLName    xml.Name   `xml:"rpc"`
-	Initialize Initialize `xml:"initialize"`
-}
-type Initialize struct {
-	XMLName     xml.Name `xml:"initialize"`
-	TapeContent string   `xml:"tape-content"`
-}
-
 type TuringMachineState struct {
 	XMLName            xml.Name           `xml:"turing-machine"`
+	Xmlns              string             `xml:"xmlns,attr"`
 	State              uint16             `xml:"state"`
 	HeadPosition       uint16             `xml:"head-position"`
 	Tape               Tape               `xml:"tape"`
@@ -29,44 +21,7 @@ type Cell struct {
 	Symbol string `xml:"symbol"`
 }
 
-var rpcInitString string
-var rpcInitStruct *Rpc
 var TMState *TuringMachineState
-
-// construct turing machine state
-func ReadRpcInitFromFile(xmlFileName string) {
-	ReadRpcInitFromString(readXmlString(xmlFileName))
-}
-
-// construct turing machine state
-func ReadRpcInitFromString(xmlString string) {
-	rpcInitString = xmlString
-	rpcInitStruct = newRpc()
-	if verbose {
-		rpcInitStruct.PrintXml()
-	}
-	TMState = newTuringMachineState()
-	// change operation state
-	doneTapeInitialize()
-}
-
-func newRpc() *Rpc {
-	var ris = new(Rpc)
-	// unmarshal (parse); xml.Unmarshal arg must be []byte
-	if err := xml.Unmarshal([]byte(rpcInitString), ris); err != nil {
-		fmt.Println("!! Error: RPC initialize XML Unmarshal error: ", err)
-	}
-	return ris
-}
-
-func (ris *Rpc) PrintXml() {
-	// marshal (returns []byte)
-	var xmlBuf, err = xml.MarshalIndent(ris, "", "  ")
-	if err != nil {
-		fmt.Println("!! Error: XML Marshal err: ", err)
-	}
-	fmt.Println(string(xmlBuf))
-}
 
 func (tmState *TuringMachineState) Print() {
 	fmt.Println(tmState.toString(0))
@@ -115,7 +70,7 @@ func (action Output) toString() string {
 	return fmt.Sprintf(" [S%d] %5s %4s", action.State, action.Symbol, moveString)
 }
 
-func (tmState *TuringMachineState) Run() {
+func (tmState *TuringMachineState) Run() *Notification {
 	var step = 1
 	var finishState = TransitionTable.GetFinishState()
 
@@ -139,6 +94,8 @@ func (tmState *TuringMachineState) Run() {
 		step++
 	}
 	fmt.Println(tmState.toString(step) + " END")
+
+	return newNotification(tmState.State)
 }
 
 func newTuringMachineState() *TuringMachineState {
@@ -146,6 +103,7 @@ func newTuringMachineState() *TuringMachineState {
 	var content = []byte(rpcInitStruct.Initialize.TapeContent) // string 2 []byte
 	tmState.State = 0
 	tmState.HeadPosition = 1
+	tmState.Xmlns = "http://example.net/turing-machine"
 	var cellList = make([]Cell, 0)
 	for coord, byteSymbol := range content {
 		var cell = Cell{Coord: coord, Symbol: string(byteSymbol)}

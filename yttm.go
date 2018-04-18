@@ -10,7 +10,7 @@ import (
 // Options
 var (
 	interactive               = flag.Bool("c", false, "CLI (interactive)")
-	verbose                   = flag.Bool("v", true, "Verbose output")
+	verbose                   = flag.Bool("v", false, "Verbose output")
 	transitionFunctionFileOpt = flag.String("t", "", "transition function table xml")
 	initializeFileOpt         = flag.String("i", "", "rpc initialize xml")
 )
@@ -19,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	if *verbose {
-		turingmachine.SetVerbose(*verbose)
+		turingmachine.SetVerbose(true)
 	}
 
 	if *transitionFunctionFileOpt != "" {
