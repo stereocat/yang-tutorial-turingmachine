@@ -17,5 +17,6 @@ fmt:
 
 clean:
 	$(GOCLEAN)
-	@rm $(TARGET) $(find . -type f -name "*~")
+	@rm $(find . -type f -name "*~")
+	@rm $(TARGET) 
 
