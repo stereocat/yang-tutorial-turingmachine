@@ -14,6 +14,7 @@ It has these top-level messages:
 	Empty
 	Halted
 	Run
+	Config
 	TuringMachine
 */
 package turing_machine
@@ -39,28 +40,26 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Move the head one cell to the left or right
-type TuringMachine_TransitionFunction_Delta_Output_HeadMove int32
+type HeadMove int32
 
 const (
-	TuringMachine_TransitionFunction_Delta_Output_HeadMove_LEFT  TuringMachine_TransitionFunction_Delta_Output_HeadMove = 0
-	TuringMachine_TransitionFunction_Delta_Output_HeadMove_RIGHT TuringMachine_TransitionFunction_Delta_Output_HeadMove = 1
+	HeadMove_LEFT  HeadMove = 0
+	HeadMove_RIGHT HeadMove = 1
 )
 
-var TuringMachine_TransitionFunction_Delta_Output_HeadMove_name = map[int32]string{
-	0: "HeadMove_LEFT",
-	1: "HeadMove_RIGHT",
+var HeadMove_name = map[int32]string{
+	0: "LEFT",
+	1: "RIGHT",
 }
-var TuringMachine_TransitionFunction_Delta_Output_HeadMove_value = map[string]int32{
-	"HeadMove_LEFT":  0,
-	"HeadMove_RIGHT": 1,
+var HeadMove_value = map[string]int32{
+	"LEFT":  0,
+	"RIGHT": 1,
 }
 
-func (x TuringMachine_TransitionFunction_Delta_Output_HeadMove) String() string {
-	return proto.EnumName(TuringMachine_TransitionFunction_Delta_Output_HeadMove_name, int32(x))
+func (x HeadMove) String() string {
+	return proto.EnumName(HeadMove_name, int32(x))
 }
-func (TuringMachine_TransitionFunction_Delta_Output_HeadMove) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{4, 1, 0, 1, 0}
-}
+func (HeadMove) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
 type InitializeRequest struct {
 	// The string with which the tape shall be initialized. The
@@ -117,22 +116,52 @@ func (m *Run) String() string            { return proto.CompactTextString(m) }
 func (*Run) ProtoMessage()               {}
 func (*Run) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
+// Config data
+type Config struct {
+	// @inject_tag: xml:"xmlns,attr"
+	Xmlns string `protobuf:"bytes,1,opt,name=xmlns" json:"xmlns,omitempty" xml:"xmlns,attr"`
+	// @inject_tag: xml:"turing-machine"
+	TuringMachine *TuringMachine `protobuf:"bytes,2,opt,name=turing_machine,json=turingMachine" json:"turing_machine,omitempty" xml:"turing-machine"`
+}
+
+func (m *Config) Reset()                    { *m = Config{} }
+func (m *Config) String() string            { return proto.CompactTextString(m) }
+func (*Config) ProtoMessage()               {}
+func (*Config) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+func (m *Config) GetXmlns() string {
+	if m != nil {
+		return m.Xmlns
+	}
+	return ""
+}
+
+func (m *Config) GetTuringMachine() *TuringMachine {
+	if m != nil {
+		return m.TuringMachine
+	}
+	return nil
+}
+
 // State data and configuration of a Turing Machine.
 type TuringMachine struct {
 	// Position of tape read/write head.
-	HeadPosition int64 `protobuf:"varint,1,opt,name=head_position,json=headPosition" json:"head_position,omitempty"`
+	// @inject_tag: xml:"head-position"
+	HeadPosition int64 `protobuf:"varint,1,opt,name=head_position,json=headPosition" json:"head_position,omitempty" xml:"head-position"`
 	// Current state of the control unit.
-	//
 	// The initial state is 0.
-	State              uint32                            `protobuf:"varint,2,opt,name=state" json:"state,omitempty"`
-	Tape               *TuringMachine_Tape               `protobuf:"bytes,3,opt,name=tape" json:"tape,omitempty"`
-	TransitionFunction *TuringMachine_TransitionFunction `protobuf:"bytes,4,opt,name=transition_function,json=transitionFunction" json:"transition_function,omitempty"`
+	// @inject_tag: xml:"state"
+	State uint32 `protobuf:"varint,2,opt,name=state" json:"state,omitempty" xml:"state"`
+	// @inject_tag: xml:"tape"
+	Tape *TuringMachine_Tape `protobuf:"bytes,3,opt,name=tape" json:"tape,omitempty" xml:"tape"`
+	// @inject_tag: xml:"transition-function"
+	TransitionFunction *TuringMachine_TransitionFunction `protobuf:"bytes,4,opt,name=transition_function,json=transitionFunction" json:"transition_function,omitempty" xml:"transition-function"`
 }
 
 func (m *TuringMachine) Reset()                    { *m = TuringMachine{} }
 func (m *TuringMachine) String() string            { return proto.CompactTextString(m) }
 func (*TuringMachine) ProtoMessage()               {}
-func (*TuringMachine) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+func (*TuringMachine) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
 func (m *TuringMachine) GetHeadPosition() int64 {
 	if m != nil {
@@ -163,15 +192,15 @@ func (m *TuringMachine) GetTransitionFunction() *TuringMachine_TransitionFunctio
 }
 
 // The contents of the tape.
-// The contents of the tape.
 type TuringMachine_Tape struct {
-	Cell []*TuringMachine_Tape_Cell `protobuf:"bytes,1,rep,name=cell" json:"cell,omitempty"`
+	// @inject_tag: xml:"cell"
+	Cell []*TuringMachine_Tape_Cell `protobuf:"bytes,1,rep,name=cell" json:"cell,omitempty" xml:"cell"`
 }
 
 func (m *TuringMachine_Tape) Reset()                    { *m = TuringMachine_Tape{} }
 func (m *TuringMachine_Tape) String() string            { return proto.CompactTextString(m) }
 func (*TuringMachine_Tape) ProtoMessage()               {}
-func (*TuringMachine_Tape) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4, 0} }
+func (*TuringMachine_Tape) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5, 0} }
 
 func (m *TuringMachine_Tape) GetCell() []*TuringMachine_Tape_Cell {
 	if m != nil {
@@ -181,21 +210,21 @@ func (m *TuringMachine_Tape) GetCell() []*TuringMachine_Tape_Cell {
 }
 
 // List of non-blank cells.
-// List of non-blank cells.
 type TuringMachine_Tape_Cell struct {
 	// Coordinate (index) of the tape cell.
-	Coord int64 `protobuf:"varint,1,opt,name=coord" json:"coord,omitempty"`
+	// @inject_tag: xml:"coord"
+	Coord int64 `protobuf:"varint,1,opt,name=coord" json:"coord,omitempty" xml:"coord"`
 	// Symbol appearing in the tape cell.
-	//
 	// Blank (empty string) is not allowed here because the
 	// 'cell' list only contains non-blank cells.
-	Symbol string `protobuf:"bytes,2,opt,name=symbol" json:"symbol,omitempty"`
+	// @inject_tag: xml:"symbol"
+	Symbol string `protobuf:"bytes,2,opt,name=symbol" json:"symbol,omitempty" xml:"symbol"`
 }
 
 func (m *TuringMachine_Tape_Cell) Reset()                    { *m = TuringMachine_Tape_Cell{} }
 func (m *TuringMachine_Tape_Cell) String() string            { return proto.CompactTextString(m) }
 func (*TuringMachine_Tape_Cell) ProtoMessage()               {}
-func (*TuringMachine_Tape_Cell) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4, 0, 0} }
+func (*TuringMachine_Tape_Cell) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5, 0, 0} }
 
 func (m *TuringMachine_Tape_Cell) GetCoord() int64 {
 	if m != nil {
@@ -213,17 +242,16 @@ func (m *TuringMachine_Tape_Cell) GetSymbol() string {
 
 // The Turing Machine is configured by specifying the
 // transition function.
-// The Turing Machine is configured by specifying the
-// transition function.
 type TuringMachine_TransitionFunction struct {
-	Delta []*TuringMachine_TransitionFunction_Delta `protobuf:"bytes,1,rep,name=delta" json:"delta,omitempty"`
+	// @inject_tag: xml:"delta"
+	Delta []*TuringMachine_TransitionFunction_Delta `protobuf:"bytes,1,rep,name=delta" json:"delta,omitempty" xml:"delta"`
 }
 
 func (m *TuringMachine_TransitionFunction) Reset()         { *m = TuringMachine_TransitionFunction{} }
 func (m *TuringMachine_TransitionFunction) String() string { return proto.CompactTextString(m) }
 func (*TuringMachine_TransitionFunction) ProtoMessage()    {}
 func (*TuringMachine_TransitionFunction) Descriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{4, 1}
+	return fileDescriptor0, []int{5, 1}
 }
 
 func (m *TuringMachine_TransitionFunction) GetDelta() []*TuringMachine_TransitionFunction_Delta {
@@ -234,12 +262,15 @@ func (m *TuringMachine_TransitionFunction) GetDelta() []*TuringMachine_Transitio
 }
 
 // The list of transition rules.
-// The list of transition rules.
+// @inject_tag: xml:"delta"
 type TuringMachine_TransitionFunction_Delta struct {
-	Input *TuringMachine_TransitionFunction_Delta_Input `protobuf:"bytes,1,opt,name=input" json:"input,omitempty"`
+	// @inject_tag: xml:"input"
+	Input *TuringMachine_TransitionFunction_Delta_Input `protobuf:"bytes,1,opt,name=input" json:"input,omitempty" xml:"input"`
 	// An arbitrary label of the transition rule.
-	Label  string                                         `protobuf:"bytes,2,opt,name=label" json:"label,omitempty"`
-	Output *TuringMachine_TransitionFunction_Delta_Output `protobuf:"bytes,3,opt,name=output" json:"output,omitempty"`
+	// @inject_tag: xml:"label"
+	Label string `protobuf:"bytes,2,opt,name=label" json:"label,omitempty" xml:"label"`
+	// @inject_tag: xml:"output"
+	Output *TuringMachine_TransitionFunction_Delta_Output `protobuf:"bytes,3,opt,name=output" json:"output,omitempty" xml:"output"`
 }
 
 func (m *TuringMachine_TransitionFunction_Delta) Reset() {
@@ -248,7 +279,7 @@ func (m *TuringMachine_TransitionFunction_Delta) Reset() {
 func (m *TuringMachine_TransitionFunction_Delta) String() string { return proto.CompactTextString(m) }
 func (*TuringMachine_TransitionFunction_Delta) ProtoMessage()    {}
 func (*TuringMachine_TransitionFunction_Delta) Descriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{4, 1, 0}
+	return fileDescriptor0, []int{5, 1, 0}
 }
 
 func (m *TuringMachine_TransitionFunction_Delta) GetInput() *TuringMachine_TransitionFunction_Delta_Input {
@@ -273,12 +304,13 @@ func (m *TuringMachine_TransitionFunction_Delta) GetOutput() *TuringMachine_Tran
 }
 
 // Input parameters (arguments) of the transition rule.
-// Input parameters (arguments) of the transition rule.
 type TuringMachine_TransitionFunction_Delta_Input struct {
 	// Current state of the control unit.
-	State uint32 `protobuf:"varint,1,opt,name=state" json:"state,omitempty"`
+	// @inject_tag: xml:"state"
+	State uint32 `protobuf:"varint,1,opt,name=state" json:"state,omitempty" xml:"state"`
 	// Symbol read from the tape cell.
-	Symbol string `protobuf:"bytes,2,opt,name=symbol" json:"symbol,omitempty"`
+	// @inject_tag: xml:"symbol"
+	Symbol string `protobuf:"bytes,2,opt,name=symbol" json:"symbol,omitempty" xml:"symbol"`
 }
 
 func (m *TuringMachine_TransitionFunction_Delta_Input) Reset() {
@@ -289,7 +321,7 @@ func (m *TuringMachine_TransitionFunction_Delta_Input) String() string {
 }
 func (*TuringMachine_TransitionFunction_Delta_Input) ProtoMessage() {}
 func (*TuringMachine_TransitionFunction_Delta_Input) Descriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{4, 1, 0, 0}
+	return fileDescriptor0, []int{5, 1, 0, 0}
 }
 
 func (m *TuringMachine_TransitionFunction_Delta_Input) GetState() uint32 {
@@ -307,15 +339,18 @@ func (m *TuringMachine_TransitionFunction_Delta_Input) GetSymbol() string {
 }
 
 // Output values of the transition rule.
-// Output values of the transition rule.
 type TuringMachine_TransitionFunction_Delta_Output struct {
-	HeadMove TuringMachine_TransitionFunction_Delta_Output_HeadMove `protobuf:"varint,1,opt,name=head_move,json=headMove,enum=turing_machine.TuringMachine_TransitionFunction_Delta_Output_HeadMove" json:"head_move,omitempty"`
+	// HeadMove head_move = 1;
+	// @inject_tag: xml:"head-move"
+	HeadMove string `protobuf:"bytes,1,opt,name=head_move,json=headMove" json:"head_move,omitempty" xml:"head-move"`
 	// New state of the control unit. If this leaf is not
 	// present, the state doesn't change.
-	State uint32 `protobuf:"varint,2,opt,name=state" json:"state,omitempty"`
+	// @inject_tag: xml:"state"
+	State uint32 `protobuf:"varint,2,opt,name=state" json:"state,omitempty" xml:"state"`
 	// Symbol to be written to the tape cell. If this leaf is
 	// not present, the symbol doesn't change.
-	Symbol string `protobuf:"bytes,3,opt,name=symbol" json:"symbol,omitempty"`
+	// @inject_tag: xml:"symbol"
+	Symbol string `protobuf:"bytes,3,opt,name=symbol" json:"symbol,omitempty" xml:"symbol"`
 }
 
 func (m *TuringMachine_TransitionFunction_Delta_Output) Reset() {
@@ -326,14 +361,14 @@ func (m *TuringMachine_TransitionFunction_Delta_Output) String() string {
 }
 func (*TuringMachine_TransitionFunction_Delta_Output) ProtoMessage() {}
 func (*TuringMachine_TransitionFunction_Delta_Output) Descriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{4, 1, 0, 1}
+	return fileDescriptor0, []int{5, 1, 0, 1}
 }
 
-func (m *TuringMachine_TransitionFunction_Delta_Output) GetHeadMove() TuringMachine_TransitionFunction_Delta_Output_HeadMove {
+func (m *TuringMachine_TransitionFunction_Delta_Output) GetHeadMove() string {
 	if m != nil {
 		return m.HeadMove
 	}
-	return TuringMachine_TransitionFunction_Delta_Output_HeadMove_LEFT
+	return ""
 }
 
 func (m *TuringMachine_TransitionFunction_Delta_Output) GetState() uint32 {
@@ -355,6 +390,7 @@ func init() {
 	proto.RegisterType((*Empty)(nil), "turing_machine.Empty")
 	proto.RegisterType((*Halted)(nil), "turing_machine.Halted")
 	proto.RegisterType((*Run)(nil), "turing_machine.Run")
+	proto.RegisterType((*Config)(nil), "turing_machine.Config")
 	proto.RegisterType((*TuringMachine)(nil), "turing_machine.TuringMachine")
 	proto.RegisterType((*TuringMachine_Tape)(nil), "turing_machine.TuringMachine.Tape")
 	proto.RegisterType((*TuringMachine_Tape_Cell)(nil), "turing_machine.TuringMachine.Tape.Cell")
@@ -362,7 +398,7 @@ func init() {
 	proto.RegisterType((*TuringMachine_TransitionFunction_Delta)(nil), "turing_machine.TuringMachine.TransitionFunction.Delta")
 	proto.RegisterType((*TuringMachine_TransitionFunction_Delta_Input)(nil), "turing_machine.TuringMachine.TransitionFunction.Delta.Input")
 	proto.RegisterType((*TuringMachine_TransitionFunction_Delta_Output)(nil), "turing_machine.TuringMachine.TransitionFunction.Delta.Output")
-	proto.RegisterEnum("turing_machine.TuringMachine_TransitionFunction_Delta_Output_HeadMove", TuringMachine_TransitionFunction_Delta_Output_HeadMove_name, TuringMachine_TransitionFunction_Delta_Output_HeadMove_value)
+	proto.RegisterEnum("turing_machine.HeadMove", HeadMove_name, HeadMove_value)
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -373,64 +409,97 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for TuringMachineService service
+// Client API for TuringMachineRpc service
 
-type TuringMachineServiceClient interface {
+type TuringMachineRpcClient interface {
+	Configure(ctx context.Context, in *Config, opts ...grpc.CallOption) (*Empty, error)
 	Initialize(ctx context.Context, in *InitializeRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
-type turingMachineServiceClient struct {
+type turingMachineRpcClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewTuringMachineServiceClient(cc *grpc.ClientConn) TuringMachineServiceClient {
-	return &turingMachineServiceClient{cc}
+func NewTuringMachineRpcClient(cc *grpc.ClientConn) TuringMachineRpcClient {
+	return &turingMachineRpcClient{cc}
 }
 
-func (c *turingMachineServiceClient) Initialize(ctx context.Context, in *InitializeRequest, opts ...grpc.CallOption) (*Empty, error) {
+func (c *turingMachineRpcClient) Configure(ctx context.Context, in *Config, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := grpc.Invoke(ctx, "/turing_machine.TuringMachineService/Initialize", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/turing_machine.TuringMachineRpc/Configure", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for TuringMachineService service
+func (c *turingMachineRpcClient) Initialize(ctx context.Context, in *InitializeRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := grpc.Invoke(ctx, "/turing_machine.TuringMachineRpc/Initialize", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
-type TuringMachineServiceServer interface {
+// Server API for TuringMachineRpc service
+
+type TuringMachineRpcServer interface {
+	Configure(context.Context, *Config) (*Empty, error)
 	Initialize(context.Context, *InitializeRequest) (*Empty, error)
 }
 
-func RegisterTuringMachineServiceServer(s *grpc.Server, srv TuringMachineServiceServer) {
-	s.RegisterService(&_TuringMachineService_serviceDesc, srv)
+func RegisterTuringMachineRpcServer(s *grpc.Server, srv TuringMachineRpcServer) {
+	s.RegisterService(&_TuringMachineRpc_serviceDesc, srv)
 }
 
-func _TuringMachineService_Initialize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _TuringMachineRpc_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Config)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TuringMachineRpcServer).Configure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/turing_machine.TuringMachineRpc/Configure",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TuringMachineRpcServer).Configure(ctx, req.(*Config))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TuringMachineRpc_Initialize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InitializeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TuringMachineServiceServer).Initialize(ctx, in)
+		return srv.(TuringMachineRpcServer).Initialize(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/turing_machine.TuringMachineService/Initialize",
+		FullMethod: "/turing_machine.TuringMachineRpc/Initialize",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TuringMachineServiceServer).Initialize(ctx, req.(*InitializeRequest))
+		return srv.(TuringMachineRpcServer).Initialize(ctx, req.(*InitializeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _TuringMachineService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "turing_machine.TuringMachineService",
-	HandlerType: (*TuringMachineServiceServer)(nil),
+var _TuringMachineRpc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "turing_machine.TuringMachineRpc",
+	HandlerType: (*TuringMachineRpcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Configure",
+			Handler:    _TuringMachineRpc_Configure_Handler,
+		},
+		{
 			MethodName: "Initialize",
-			Handler:    _TuringMachineService_Initialize_Handler,
+			Handler:    _TuringMachineRpc_Initialize_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -440,37 +509,38 @@ var _TuringMachineService_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("turing-machine.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 499 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x94, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0x31, 0xfe, 0xd3, 0x66, 0xd2, 0x44, 0xed, 0x10, 0x50, 0xe4, 0x03, 0x4a, 0xcd, 0x81,
-	0x5c, 0xb0, 0xc0, 0x40, 0x2e, 0xc0, 0xa9, 0x34, 0x24, 0x52, 0x2b, 0xd0, 0x12, 0xae, 0x58, 0x1b,
-	0x7b, 0x21, 0x96, 0x9c, 0x5d, 0xe3, 0xac, 0x23, 0x85, 0x27, 0xe1, 0x45, 0x78, 0x0d, 0xc4, 0x23,
-	0xa1, 0xdd, 0x75, 0x9a, 0xa6, 0x51, 0x55, 0xd1, 0xde, 0x3c, 0x9f, 0x76, 0x7e, 0xdf, 0x37, 0x9b,
-	0xcd, 0x40, 0x47, 0x56, 0x65, 0xc6, 0xbf, 0x3f, 0x9b, 0xd3, 0x64, 0x96, 0x71, 0x16, 0x16, 0xa5,
-	0x90, 0x02, 0xdb, 0x46, 0x8d, 0x6b, 0x35, 0x18, 0xc0, 0xd1, 0x98, 0x67, 0x32, 0xa3, 0x79, 0xf6,
-	0x93, 0x11, 0xf6, 0xa3, 0x62, 0x0b, 0x89, 0xc7, 0x70, 0x20, 0x69, 0xc1, 0xe2, 0x44, 0x70, 0xc9,
-	0xb8, 0xec, 0x5a, 0x3d, 0xab, 0xdf, 0x20, 0x4d, 0xa5, 0x9d, 0x18, 0x29, 0xd8, 0x03, 0xf7, 0x74,
-	0x5e, 0xc8, 0x55, 0xf0, 0x18, 0xbc, 0x11, 0xcd, 0x25, 0x4b, 0xb1, 0x03, 0xee, 0x42, 0x52, 0xc9,
-	0xf4, 0xf1, 0x16, 0x31, 0x45, 0xe0, 0x82, 0x4d, 0x2a, 0x1e, 0xfc, 0xda, 0x83, 0xd6, 0x44, 0x5b,
-	0x9f, 0x1b, 0x67, 0x7c, 0x02, 0xad, 0x19, 0xa3, 0x69, 0x5c, 0x88, 0x45, 0x26, 0x33, 0xc1, 0x75,
-	0x9b, 0x4d, 0x0e, 0x94, 0xf8, 0xa9, 0xd6, 0x36, 0xcc, 0xfb, 0x97, 0x98, 0x38, 0x00, 0x47, 0x65,
-	0xe9, 0xda, 0x3d, 0xab, 0xdf, 0x8c, 0x82, 0x70, 0x7b, 0xa6, 0x70, 0xcb, 0x27, 0x9c, 0xd0, 0x82,
-	0x11, 0x7d, 0x1e, 0x29, 0x3c, 0x90, 0x25, 0xe5, 0x86, 0x1d, 0x7f, 0xab, 0x78, 0xa2, 0x8d, 0x1d,
-	0x8d, 0x79, 0x7e, 0x03, 0xe6, 0xa2, 0x71, 0x58, 0xf7, 0x11, 0x94, 0x3b, 0x9a, 0xbf, 0x02, 0x47,
-	0x19, 0xe2, 0x1b, 0x70, 0x12, 0x96, 0xe7, 0x5d, 0xab, 0x67, 0xf7, 0x9b, 0xd1, 0xd3, 0x9b, 0x23,
-	0x86, 0x27, 0x2c, 0xcf, 0x89, 0x6e, 0xf2, 0x5f, 0x81, 0xa3, 0x2a, 0x35, 0x7d, 0x22, 0x44, 0x99,
-	0xd6, 0x57, 0x63, 0x0a, 0x7c, 0x04, 0xde, 0x62, 0x35, 0x9f, 0x8a, 0x5c, 0x5f, 0x4a, 0x83, 0xd4,
-	0x95, 0xff, 0xdb, 0x01, 0xdc, 0x4d, 0x89, 0x67, 0xe0, 0xa6, 0x2c, 0x97, 0xb4, 0x8e, 0x32, 0xf8,
-	0xdf, 0x31, 0xc3, 0xf7, 0xaa, 0x9b, 0x18, 0x88, 0xff, 0xd7, 0x06, 0x57, 0x0b, 0x48, 0xc0, 0xcd,
-	0x78, 0x51, 0x99, 0xd7, 0xd1, 0x8c, 0xde, 0xde, 0x8e, 0x1b, 0x8e, 0x15, 0x83, 0x18, 0x94, 0x1a,
-	0x38, 0xa7, 0x53, 0xb6, 0x9e, 0xcc, 0x14, 0xf8, 0x05, 0x3c, 0x51, 0x49, 0x65, 0x65, 0x7e, 0xf0,
-	0x77, 0xb7, 0xb4, 0xfa, 0xa8, 0x21, 0xa4, 0x86, 0xf9, 0xaf, 0xc1, 0x1d, 0xaf, 0x5d, 0x77, 0x1f,
-	0xee, 0xb5, 0xd7, 0xfc, 0xc7, 0x02, 0xcf, 0x90, 0x30, 0x81, 0x86, 0x7e, 0xc2, 0x73, 0xb1, 0x34,
-	0xcd, 0xed, 0x68, 0x78, 0xa7, 0x6c, 0xe1, 0x88, 0xd1, 0xf4, 0x5c, 0x2c, 0x19, 0xd9, 0x9f, 0xd5,
-	0x5f, 0xd7, 0xfc, 0x05, 0x36, 0xe9, 0xec, 0xcb, 0xe9, 0x82, 0x17, 0xb0, 0xbf, 0x66, 0xe0, 0x11,
-	0xb4, 0xd6, 0xdf, 0xf1, 0xd9, 0xe9, 0x70, 0x72, 0x78, 0x0f, 0x11, 0xda, 0x17, 0x12, 0x19, 0x7f,
-	0x18, 0x4d, 0x0e, 0xad, 0xe8, 0x2b, 0x74, 0xb6, 0x42, 0x7e, 0x66, 0xe5, 0x32, 0x4b, 0x18, 0x0e,
-	0x01, 0x36, 0xab, 0x01, 0x8f, 0xaf, 0x0e, 0xb6, 0xb3, 0x36, 0xfc, 0x87, 0x57, 0x8f, 0xe8, 0x0d,
-	0x31, 0xf5, 0xf4, 0xe6, 0x79, 0xf9, 0x2f, 0x00, 0x00, 0xff, 0xff, 0x9d, 0x3c, 0xbe, 0x53, 0x91,
-	0x04, 0x00, 0x00,
+	// 528 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0xdb, 0x6e, 0xd3, 0x40,
+	0x10, 0xc5, 0xf5, 0x85, 0x64, 0xd2, 0xa0, 0x30, 0x94, 0x2a, 0x32, 0x02, 0x52, 0xf3, 0x40, 0x84,
+	0x84, 0x85, 0x02, 0xe4, 0x81, 0xcb, 0x53, 0xda, 0x90, 0x48, 0xad, 0x40, 0x4b, 0x78, 0x8e, 0x36,
+	0xce, 0xb6, 0xb5, 0xb4, 0xd9, 0x35, 0xc9, 0xba, 0x22, 0x7c, 0x08, 0x4f, 0xfc, 0x08, 0xff, 0xc1,
+	0x07, 0xa1, 0xdd, 0x75, 0xc8, 0x4d, 0xa1, 0xa2, 0x8f, 0xe7, 0x78, 0xe6, 0xcc, 0x99, 0xf1, 0xce,
+	0xc0, 0x81, 0xca, 0xa7, 0xa9, 0xb8, 0x78, 0x3e, 0xa1, 0xc9, 0x65, 0x2a, 0x58, 0x9c, 0x4d, 0xa5,
+	0x92, 0x78, 0xc7, 0xb2, 0xc3, 0x82, 0x8d, 0xda, 0x70, 0xb7, 0x2f, 0x52, 0x95, 0x52, 0x9e, 0x7e,
+	0x67, 0x84, 0x7d, 0xcd, 0xd9, 0x4c, 0xe1, 0x11, 0xec, 0x2b, 0x9a, 0xb1, 0x61, 0x22, 0x85, 0x62,
+	0x42, 0xd5, 0x9d, 0x86, 0xd3, 0x2c, 0x93, 0x8a, 0xe6, 0x3a, 0x96, 0x8a, 0x6e, 0x83, 0x7f, 0x32,
+	0xc9, 0xd4, 0x3c, 0x7a, 0x04, 0x41, 0x8f, 0x72, 0xc5, 0xc6, 0x78, 0x00, 0xfe, 0x4c, 0x51, 0xc5,
+	0x4c, 0x78, 0x95, 0x58, 0x10, 0xf9, 0xe0, 0x92, 0x5c, 0x44, 0x63, 0x08, 0x3a, 0x52, 0x9c, 0xa7,
+	0x17, 0x3a, 0xec, 0xdb, 0x84, 0x8b, 0x59, 0xa1, 0x6a, 0x01, 0x1e, 0xc3, 0x86, 0xb3, 0xfa, 0x5e,
+	0xc3, 0x69, 0x56, 0x5a, 0x0f, 0xe3, 0x75, 0x3a, 0x1e, 0x18, 0x78, 0x66, 0x11, 0xa9, 0xaa, 0x55,
+	0x18, 0xfd, 0x0c, 0xa0, 0xba, 0x16, 0x80, 0x4f, 0xa0, 0x7a, 0xc9, 0xe8, 0x78, 0x98, 0xc9, 0x59,
+	0xaa, 0x52, 0x29, 0x4c, 0x55, 0x97, 0xec, 0x6b, 0xf2, 0x53, 0xc1, 0x2d, 0x9d, 0xef, 0xad, 0x38,
+	0xc7, 0x36, 0x78, 0xba, 0xe3, 0xba, 0x6b, 0x8c, 0x44, 0xff, 0x34, 0x12, 0x0f, 0x68, 0xc6, 0x88,
+	0x89, 0x47, 0x0a, 0xf7, 0xd4, 0x94, 0x0a, 0xab, 0x3d, 0x3c, 0xcf, 0x45, 0x62, 0x0a, 0x7b, 0x46,
+	0xe6, 0xc5, 0x35, 0x32, 0x7f, 0x13, 0xbb, 0x45, 0x1e, 0x41, 0xb5, 0xc5, 0x85, 0x73, 0xf0, 0x74,
+	0x41, 0x7c, 0x0b, 0x5e, 0xc2, 0x38, 0xaf, 0x3b, 0x0d, 0xb7, 0x59, 0x69, 0x3d, 0xbd, 0xde, 0x62,
+	0xdc, 0x61, 0x9c, 0x13, 0x93, 0x14, 0xbe, 0x02, 0x4f, 0x23, 0xdd, 0x7d, 0x22, 0xe5, 0x74, 0x5c,
+	0x8c, 0xc6, 0x02, 0x3c, 0x84, 0x60, 0x36, 0x9f, 0x8c, 0x24, 0x37, 0x43, 0x29, 0x93, 0x02, 0x85,
+	0xbf, 0x5c, 0xc0, 0x6d, 0x97, 0x78, 0x0a, 0xfe, 0x98, 0x71, 0x45, 0x0b, 0x2b, 0xed, 0xff, 0x6d,
+	0x33, 0x3e, 0xd6, 0xd9, 0xc4, 0x8a, 0x84, 0xbf, 0xf7, 0xc0, 0x37, 0x04, 0x12, 0xf0, 0x53, 0x91,
+	0xe5, 0xf6, 0x0d, 0x56, 0x5a, 0xef, 0x6e, 0xa6, 0x1b, 0xf7, 0xb5, 0x06, 0xb1, 0x52, 0xba, 0x61,
+	0x4e, 0x47, 0x6c, 0xd1, 0x99, 0x05, 0xf8, 0x05, 0x02, 0x99, 0x2b, 0x5d, 0xca, 0xfe, 0xf0, 0xf7,
+	0x37, 0x2c, 0xf5, 0xd1, 0x88, 0x90, 0x42, 0x2c, 0x7c, 0x0d, 0x7e, 0x7f, 0x51, 0x75, 0x7b, 0x3d,
+	0x76, 0x8e, 0xf9, 0x33, 0x04, 0x56, 0x08, 0x1f, 0x40, 0xd9, 0xbc, 0xe0, 0x89, 0xbc, 0x62, 0xc5,
+	0xce, 0x94, 0x34, 0x71, 0x26, 0xaf, 0xd8, 0x8e, 0x97, 0xbb, 0x14, 0x75, 0x57, 0x45, 0x9f, 0x3d,
+	0x86, 0x52, 0x6f, 0x91, 0x59, 0x02, 0xef, 0xf4, 0xa4, 0x3b, 0xa8, 0xdd, 0xc2, 0x32, 0xf8, 0xa4,
+	0xff, 0xa1, 0x37, 0xa8, 0x39, 0xad, 0x1f, 0x0e, 0xd4, 0xd6, 0x17, 0x2c, 0x4b, 0xf0, 0x0d, 0x94,
+	0xed, 0xea, 0xe6, 0x53, 0x86, 0x87, 0x9b, 0x53, 0xb1, 0x9f, 0xc2, 0xfb, 0x9b, 0xbc, 0xb9, 0x0e,
+	0xd8, 0x05, 0x58, 0x9e, 0x17, 0x3c, 0xda, 0x0c, 0xda, 0x3a, 0x3d, 0x3b, 0x74, 0x46, 0x81, 0xb9,
+	0x5e, 0x2f, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0x94, 0xd0, 0xa6, 0xfe, 0xd5, 0x04, 0x00, 0x00,
 }
