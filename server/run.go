@@ -48,13 +48,13 @@ func getOutputString(action *pb.TuringMachine_TransitionFunction_Delta_Output) s
 
 func (svr *Server) RunTM() {
 	tm := svr.TuringMachine
-	var (
-		step        = 1
-		finishState = svr.TransitionTable.GetFinishState()
-		// header
-		indent       = len([]byte(getTMString(tm, step))) - 20 // offset
-		headerString = fmt.Sprintf("Step State | Tape %%%ds | Next Write Move\n", indent)
-	)
+	fmt.Printf("## svr.tm:%v\n", svr.TuringMachine)
+	step := 1
+	finishState := svr.TransitionTable.GetFinishState()
+
+	// header
+	indent := len([]byte(getTMString(tm, step))) - 20 // offset
+	headerString := fmt.Sprintf("Step State | Tape %%%ds | Next Write Move\n", indent)
 	fmt.Printf(headerString, " ")
 
 	// Run
@@ -80,6 +80,7 @@ func (svr *Server) InitializeTapeByString(tapeContent string) {
 	svr.TuringMachine.Tape = &pb.TuringMachine_Tape{
 		Cell: make([]*pb.TuringMachine_Tape_Cell, 0),
 	}
+	// notice: at 1st time, svr.TuringMachine.Tape == nil
 	cellList := svr.TuringMachine.GetTape().GetCell()
 	for coord, byteSymbol := range content {
 		var cell = &pb.TuringMachine_Tape_Cell{

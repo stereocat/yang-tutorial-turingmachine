@@ -19,7 +19,19 @@ func (svr *Server) Initialize(ctx context.Context, req *pb.InitializeRequest) (*
 }
 
 func (svr *Server) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, error) {
-	svr.TuringMachine = req.GetTuringMachine()
+	reqTm := req.GetTuringMachine()
+	if reqTm != nil {
+		// overwrite if found in request
+		reqTtf := reqTm.GetTransitionFunction()
+		if reqTtf != nil {
+			svr.TuringMachine.TransitionFunction = reqTtf
+		}
+		reqTape := reqTm.GetTape()
+		if reqTape != nil {
+			svr.TuringMachine.Tape = reqTape
+		}
+	}
+
 	log.Printf("Config: TuringMachine: %s\n", svr.TuringMachine.String())
 	svr.TransitionTable = NewTTF(svr.TuringMachine.GetTransitionFunction())
 	svr.TransitionTable.PrintTable()
