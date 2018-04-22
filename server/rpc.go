@@ -36,7 +36,7 @@ func (svr *Server) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, er
 	return &pb.Empty{}, nil
 }
 
-func (svr *Server) Run(ctx context.Context, req *pb.Empty) (*pb.Empty, error) {
-	svr.RunTM()
-	return &pb.Empty{}, nil
+func (svr *Server) Run(ctx context.Context, req *pb.Empty) (*pb.Halted, error) {
+    var halted = &pb.Halted{State: svr.RunTM()}
+	return halted, nil
 }

@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+const STEP_MAX = 100
+
 func getTMString(tm *pb.TuringMachine, step int) string {
 	var stateString string
 	stateString = fmt.Sprintf("%4d  [S%d] | ", step, tm.GetState())
@@ -46,7 +48,7 @@ func getOutputString(action *pb.TuringMachine_TransitionFunction_Delta_Output) s
 	return fmt.Sprintf(" [S%d] %5s %4s", action.GetState(), action.GetSymbol(), moveString)
 }
 
-func (svr *Server) RunTM() {
+func (svr *Server) RunTM() uint32 {
 	tm := svr.TuringMachine
 	step := 1
 	finishState := svr.TransitionTable.GetFinishState()
@@ -57,7 +59,7 @@ func (svr *Server) RunTM() {
 	fmt.Printf(headerString, " ")
 
 	// Run
-	for tm.GetState() != finishState {
+	for tm.GetState() != finishState && step < STEP_MAX {
 		var (
 			// read symbol under head-position
 			cellList      = tm.GetTape().GetCell()
@@ -72,6 +74,11 @@ func (svr *Server) RunTM() {
 		step++
 	}
 	fmt.Println(getTMString(tm, step) + " END")
+
+    if step >= STEP_MAX {
+        return 1
+    }
+    return 0
 }
 
 func (svr *Server) InitializeTapeByString(tapeContent string) {

@@ -37,9 +37,9 @@ func SendConfig(ctx context.Context, client pb.TuringMachineRpcClient, ttfFileNa
 func SendRun(ctx context.Context, client pb.TuringMachineRpcClient) {
 	// Run
 	log.Printf("Run")
-	_, err := client.Run(ctx, &pb.Empty{})
+	halted, err := client.Run(ctx, &pb.Empty{})
 	if err != nil {
 		log.Fatalf("could not run: %v\n", err)
 	}
-	log.Printf("End Run")
+	log.Printf("End Run, state=%d\n", halted.GetState())
 }
