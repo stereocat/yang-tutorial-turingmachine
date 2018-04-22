@@ -2,7 +2,7 @@ package tm_server
 
 import (
 	pb "../proto"
-    "fmt"
+	"fmt"
 )
 
 // symbol-output map
@@ -13,7 +13,7 @@ type TtfOutputMap map[string]*pb.TuringMachine_TransitionFunction_Delta_Output
 type TTF map[uint32]TtfOutputMap
 
 func NewTTF(ttf_config *pb.TuringMachine_TransitionFunction) TTF {
-    deltaList := ttf_config.GetDelta()
+	deltaList := ttf_config.GetDelta()
 	ttf := make(TTF)
 	for _, delta := range deltaList {
 		var input = delta.GetInput()

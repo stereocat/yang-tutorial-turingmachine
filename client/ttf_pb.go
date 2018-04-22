@@ -43,4 +43,3 @@ func openXmlFile(xmlFile *os.File) string {
 	}
 	return strings.Join(lines[:], "\n") // convert to single line
 }
-

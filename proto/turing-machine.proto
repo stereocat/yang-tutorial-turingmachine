@@ -12,6 +12,7 @@ package turing_machine;
 service TuringMachineRpc {
   rpc Configure (Config) returns (Empty);
   rpc Initialize (InitializeRequest) returns (Empty);
+  rpc Run (Empty) returns (Empty);
 }
 message InitializeRequest {
   // The string with which the tape shall be initialized. The
@@ -78,7 +79,6 @@ message TuringMachine {
   // transition function.
   message TransitionFunction {
     // The list of transition rules.
-    // @inject_tag: xml:"delta"
     message Delta {
       // Input parameters (arguments) of the transition rule.
       message Input {

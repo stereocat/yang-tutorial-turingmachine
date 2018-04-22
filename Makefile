@@ -14,6 +14,7 @@ YANGFILE := $(FILEBODY).yang
 PBFILE := $(PBDIR)/$(FILEBODY).proto
 PBFILEBASE := $(PBFILE).orig
 PBTARGET := $(PBDIR)/$(FILEBODY).pb.go
+EMACSBAK := $(shell find . -type f -name "*~")
 
 all: fmt protobuf
 
@@ -36,4 +37,4 @@ fmt:
 .PHONY : clean
 clean:
 	$(GOCLEAN)
-	rm -f $(find . -type f -name "*~") $(TARGET) $(PBTARGET)
+	rm -f $(EMACSBAK) $(TARGET) $(PBTARGET)

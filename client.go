@@ -1,8 +1,8 @@
 package main
 
 import (
+	tmc "./client"
 	pb "./proto"
-	tm "./turing_machine"
 	"flag"
 	context "golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
@@ -35,7 +35,7 @@ func main() {
 	log.Printf("Configure")
 	var ttf *pb.Config
 	if *ttfFileOpt != "" {
-		ttf = tm.ReadTtfFromFile(*ttfFileOpt)
+		ttf = tmc.ReadTtfFromFile(*ttfFileOpt)
 	}
 	_, err = client.Configure(ctx, ttf)
 	if err != nil {
@@ -51,4 +51,12 @@ func main() {
 		log.Fatalf("could not initialize: %v\n", err)
 	}
 	log.Printf("End initialize\n")
+
+	// Run
+	log.Printf("Run")
+	_, err = client.Run(ctx, &pb.Empty{})
+	if err != nil {
+		log.Fatalf("could not run: %v\n", err)
+	}
+	log.Printf("End Run")
 }
