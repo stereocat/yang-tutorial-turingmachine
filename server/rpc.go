@@ -36,7 +36,11 @@ func (svr *Server) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, er
 	return &pb.Empty{}, nil
 }
 
-func (svr *Server) Run(ctx context.Context, req *pb.Empty) (*pb.Halted, error) {
-    var halted = &pb.Halted{State: svr.RunTM()}
+func (svr *Server) Run(ctx context.Context, _ *pb.Empty) (*pb.Halted, error) {
+	var halted = &pb.Halted{State: svr.RunTM()}
 	return halted, nil
+}
+
+func (svr *Server) GetState(ctx context.Context, _ *pb.Empty) (*pb.TuringMachine, error) {
+	return svr.TuringMachine, nil
 }

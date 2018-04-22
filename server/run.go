@@ -75,10 +75,10 @@ func (svr *Server) RunTM() uint32 {
 	}
 	fmt.Println(getTMString(tm, step) + " END")
 
-    if step >= STEP_MAX {
-        return 1
-    }
-    return 0
+	if step >= STEP_MAX {
+		return 1
+	}
+	return 0
 }
 
 func (svr *Server) InitializeTapeByString(tapeContent string) {

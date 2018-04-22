@@ -34,4 +34,5 @@ func main() {
 	tmc.SendInit(ctx, client, "01110110")
 	tmc.SendConfig(ctx, client, *ttfFileOpt)
 	tmc.SendRun(ctx, client)
+	tmc.SendGetState(ctx, client)
 }

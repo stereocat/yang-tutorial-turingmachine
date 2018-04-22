@@ -13,6 +13,7 @@ service TuringMachineRpc {
   rpc Configure (Config) returns (Empty);
   rpc Initialize (InitializeRequest) returns (Empty);
   rpc Run (Empty) returns (Halted);
+  rpc GetState (Empty) returns (TuringMachine);
 }
 message InitializeRequest {
   // The string with which the tape shall be initialized. The

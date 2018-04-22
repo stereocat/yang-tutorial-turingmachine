@@ -2,13 +2,13 @@ package tm_client
 
 import (
 	pb "../proto"
+	"fmt"
 	context "golang.org/x/net/context"
 	"log"
 	"os"
 )
 
 func SendInit(ctx context.Context, client pb.TuringMachineRpcClient, tape string) {
-	// Initialize
 	log.Printf("Initialize")
 	initRequest := &pb.InitializeRequest{TapeContent: tape}
 	_, err := client.Initialize(ctx, initRequest) // return Empty
@@ -35,11 +35,20 @@ func SendConfig(ctx context.Context, client pb.TuringMachineRpcClient, ttfFileNa
 }
 
 func SendRun(ctx context.Context, client pb.TuringMachineRpcClient) {
-	// Run
 	log.Printf("Run")
 	halted, err := client.Run(ctx, &pb.Empty{})
 	if err != nil {
 		log.Fatalf("could not run: %v\n", err)
 	}
 	log.Printf("End Run, state=%d\n", halted.GetState())
+}
+
+func SendGetState(ctx context.Context, client pb.TuringMachineRpcClient) {
+	log.Printf("Get State of Server Turing Machine\n")
+	tm, err := client.GetState(ctx, &pb.Empty{})
+	if err != nil {
+		log.Fatalf("could not get state: %v\n", err)
+	}
+	fmt.Println(TMXmlString(tm))
+	log.Printf("End Get State\n")
 }

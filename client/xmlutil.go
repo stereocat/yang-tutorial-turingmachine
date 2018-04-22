@@ -29,3 +29,12 @@ func NewConfig(xmlString string) *pb.Config {
 	}
 	return tts
 }
+
+func TMXmlString(tm *pb.TuringMachine) string {
+	// marshal (returns []byte)
+	var xmlBuf, err = xml.MarshalIndent(tm, "", "  ")
+	if err != nil {
+		log.Fatalf("Error: XML Marshal err: ", err)
+	}
+	return string(xmlBuf)
+}
