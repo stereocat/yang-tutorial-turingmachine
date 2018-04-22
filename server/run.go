@@ -48,7 +48,6 @@ func getOutputString(action *pb.TuringMachine_TransitionFunction_Delta_Output) s
 
 func (svr *Server) RunTM() {
 	tm := svr.TuringMachine
-	fmt.Printf("## svr.tm:%v\n", svr.TuringMachine)
 	step := 1
 	finishState := svr.TransitionTable.GetFinishState()
 

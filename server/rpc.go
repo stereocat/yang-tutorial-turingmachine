@@ -31,8 +31,6 @@ func (svr *Server) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, er
 			svr.TuringMachine.Tape = reqTape
 		}
 	}
-
-	log.Printf("Config: TuringMachine: %s\n", svr.TuringMachine.String())
 	svr.TransitionTable = NewTTF(svr.TuringMachine.GetTransitionFunction())
 	svr.TransitionTable.PrintTable()
 	return &pb.Empty{}, nil

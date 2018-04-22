@@ -17,12 +17,10 @@ func ReadTtfFromFile(xmlFileName string) *pb.Config {
 func readTtfFromString(xmlString string) *pb.Config {
 	// log.Printf("xmlString: %s\n", xmlString)
 	tts := NewConfig(xmlString)
-	log.Printf("transition table: %v\n", tts)
 	return tts
 }
 
 func stringFromXmlFile(xmlFileName string) string {
-	log.Printf("#### File: %s\n", xmlFileName)
 	xmlFile, err := os.Open(xmlFileName)
 	if err != nil {
 		log.Fatalf("Error: Cannot read file:%s\n", xmlFileName)
