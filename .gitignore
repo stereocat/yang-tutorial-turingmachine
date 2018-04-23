@@ -1,8 +1,13 @@
 # emacs
 *~
 *.*~
+
 # binary
-yttm
+tm_server
+tm_client
+
+# Editor
+.idea
 
 # Binaries for programs and plugins
 *.exe

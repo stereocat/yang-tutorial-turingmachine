@@ -56,6 +56,6 @@ func SendGetState(ctx context.Context, client pb.TuringMachineRpcClient) {
 	if err != nil {
 		log.Fatalf("could not get state: %v\n", err)
 	}
-	fmt.Println(TMXmlString(tm))
+	fmt.Println(tm.ToXmlString())
 	log.Printf("End Get State\n")
 }

@@ -1,9 +1,7 @@
 package tm_client
 
 import (
-	pb "../proto"
 	"bufio"
-	"encoding/xml"
 	"log"
 	"os"
 	"strings"
@@ -44,13 +42,4 @@ func openXmlFile(xmlFile *os.File) string {
 		lines = append(lines, line)
 	}
 	return strings.Join(lines[:], "\n") // convert to single line
-}
-
-func TMXmlString(tm *pb.TuringMachine) string {
-	// marshal (returns []byte)
-	var xmlBuf, err = xml.MarshalIndent(tm, "", "  ")
-	if err != nil {
-		log.Fatalf("Error: XML Marshal err: ", err)
-	}
-	return string(xmlBuf)
 }
