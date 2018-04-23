@@ -1,5 +1,4 @@
 SHELL := /bin/bash
-TARGET := yttm
 SRC := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 GOCMD := go
@@ -17,21 +16,29 @@ PBFILE := $(PBDIR)/$(FILEBODY).proto
 PBFILEBASE := $(PBFILE).orig
 PBTARGET := $(PBDIR)/$(FILEBODY).pb.go
 EMACSBAK := $(shell find . -type f -name "*~")
+CLIENTEXE := tm_client
+CLIENTDIR := ./client
+CLIENTSRC := $(wildcard $(CLIENTDIR)/*.go)
+SERVEREXE := tm_server
+SERVERDIR := ./server
+SERVERSRC := $(wildcard $(SERVERDIR)/*.go)
 
-all: fmt protobuf
+all: fmt $(CLIENTEXE) $(SERVEREXE)
 
-client: client.go protobuf
-	$(GOCMD) run client.go -t $(TTFXMLFILE) -i $(INITXMLFILE)
+$(PBTARGET): $(PBFILE)
+	$(PROTOC) --proto_path=$(PBDIR) --go_out=plugins=grpc:$(PBDIR) $(PBFILE)
+	protoc-go-inject-tag -input $(PBTARGET)
 
-server: server.go protobuf
-	$(GOCMD) run server.go
+$(CLIENTEXE): client.go $(PBTARGET) $(CLIENTSRC)
+	$(GOCMD) build -o $@ client.go
+
+$(SERVEREXE): server.go $(PBTARGET) $(SERVERSRC)
+	$(GOCMD) build -o $@ server.go
+
+protobuf: $(PBTARGET)
 
 goyang: $(YANGFILE)
 	$(GOYANGCMD) --format=proto $(YANGFILE) > $(PBFILEBASE)
-
-protobuf: $(PBFILE)
-	$(PROTOC) --proto_path=$(PBDIR) --go_out=plugins=grpc:$(PBDIR) $(PBFILE)
-	protoc-go-inject-tag -input $(PBTARGET)
 
 fmt:
 	$(GOFMT) -l -w -e $(SRC)
@@ -39,4 +46,4 @@ fmt:
 .PHONY : clean
 clean:
 	$(GOCLEAN)
-	rm -f $(EMACSBAK) $(TARGET) $(PBTARGET)
+	rm -f $(EMACSBAK) $(TARGET) $(PBTARGET) $(SERVEREXE) $(CLIENTEXE)

@@ -12,22 +12,28 @@ Target: Turing Machine Implementation used in [pyang Yang Tutorial](https://gith
 * [DSDLMappingTutorial < Main < TWiki](http://www.yang-central.org/twiki/bin/view/Main/DSDLMappingTutorial)
 
 ## Build/Run
-Depend: [GitHub \- favadi/protoc\-go\-inject\-tag: Inject custom tags to protobuf golang struct](https://github.com/favadi/protoc-go-inject-tag), install it.
+Install dependency tools at first.
+* [GitHub \- favadi/protoc\-go\-inject\-tag: Inject custom tags to protobuf golang struct](https://github.com/favadi/protoc-go-inject-tag)
+* [GitHub \- openconfig/goyang: YANG parser and compiler to produce Go language objects](https://github.com/openconfig/goyang)
+
 ```
+$ go get github.com/openconfig/goyang
 $ go get github.com/favadi/protoc-go-inject-tag
+```
+
+and make server and client
+```
+$ make
 ```
 
 Run server
 ```
-$ make server
-[...]
-go run server.go
+$ ./tm_server
 ```
-Run client (in another terminal), and type command like below.
+Run client (in another terminal),  and type command like below.
 ```
-$ make client
-[...]
-go run client.go ...
+$ ./tm_client -t turing-machi.xml -i turing-machine-rpc.xml
+command: help
 command: get
 command: initialize
 command: config
