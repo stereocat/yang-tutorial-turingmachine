@@ -12,12 +12,32 @@ Target: Turing Machine Implementation used in [pyang Yang Tutorial](https://gith
 * [DSDLMappingTutorial < Main < TWiki](http://www.yang-central.org/twiki/bin/view/Main/DSDLMappingTutorial)
 
 ## Build/Run
-
+Depend: [GitHub \- favadi/protoc\-go\-inject\-tag: Inject custom tags to protobuf golang struct](https://github.com/favadi/protoc-go-inject-tag), install it.
 ```
-$ go build yttm.go
-$ ./yttm -t turing-machine-config.xml -i turing-machine-rpc.xml
-[...]
+$ go get github.com/favadi/protoc-go-inject-tag
+```
 
+Run server
+```
+$ make server
+[...]
+go run server.go
+```
+Run client (in another terminal), and type command like below.
+```
+$ make client
+[...]
+go run client.go ...
+command: get
+command: initialize
+command: config
+command: run
+command: get
+command: exit
+```
+
+Then client send gRPC message to server, server works as turing-machine.
+```
 # create transition function
 input        | output
 state symbol | state symbol headmove
