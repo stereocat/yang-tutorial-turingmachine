@@ -18,6 +18,7 @@ service TuringMachineRpc {
 message InitializeRequest {
   // The string with which the tape shall be initialized. The
   // leftmost symbol will be at tape coordinate 0.
+  // @inject_tag: xml:"tape-content"
   string tape_content = 1;
 }
 
@@ -41,6 +42,14 @@ message Config {
   string xmlns = 1;
   // @inject_tag: xml:"turing-machine"
   TuringMachine turing_machine = 2;
+}
+
+// Initialize Request RPC
+message Rpc {
+  // @inject_tag: xml:"message-id,attr"
+  uint32 messageId = 1;
+  // @inject_tag: xml:"initialize"
+  InitializeRequest initialize = 2;
 }
 
 // Move the head one cell to the left or right

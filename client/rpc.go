@@ -8,9 +8,17 @@ import (
 	"os"
 )
 
-func SendInit(ctx context.Context, client pb.TuringMachineRpcClient, tape string) {
+func SendInit(ctx context.Context, client pb.TuringMachineRpcClient, initFileName string) {
 	log.Printf("Initialize")
-	initRequest := &pb.InitializeRequest{TapeContent: tape}
+	var initRequest *pb.InitializeRequest
+	if initFileName != "" {
+		initRequest = ReadInitRequestFromFile(initFileName)
+	} else {
+		log.Fatalf("file: %s not found.", initFileName)
+		os.Exit(1)
+	}
+	log.Printf("# initReq: %v\n", initRequest)
+
 	_, err := client.Initialize(ctx, initRequest) // return Empty
 	if err != nil {
 		log.Fatalf("could not initialize: %v\n", err)

@@ -11,6 +11,8 @@ GOFMT := gofmt
 PBDIR := ./proto
 FILEBODY := turing-machine
 YANGFILE := $(FILEBODY).yang
+TTFXMLFILE := $(FILEBODY)-config.xml
+INITXMLFILE := $(FILEBODY)-rpc.xml
 PBFILE := $(PBDIR)/$(FILEBODY).proto
 PBFILEBASE := $(PBFILE).orig
 PBTARGET := $(PBDIR)/$(FILEBODY).pb.go
@@ -19,7 +21,7 @@ EMACSBAK := $(shell find . -type f -name "*~")
 all: fmt protobuf
 
 client: client.go protobuf
-	$(GOCMD) run client.go -t $(FILEBODY)-config.xml
+	$(GOCMD) run client.go -t $(TTFXMLFILE) -i $(INITXMLFILE)
 
 server: server.go protobuf
 	$(GOCMD) run server.go

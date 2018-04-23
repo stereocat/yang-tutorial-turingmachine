@@ -54,16 +54,18 @@ func newCommandMap() CommandMap {
 }
 
 type ClientCli struct {
-	TtfFileName string
-	Ctx         context.Context
-	Client      pb.TuringMachineRpcClient
+	TtfFileName  string
+	InitFileName string
+	Ctx          context.Context
+	Client       pb.TuringMachineRpcClient
 }
 
-func NewClientCli(ctx context.Context, client pb.TuringMachineRpcClient, ttffn string) *ClientCli {
+func NewClientCli(ctx context.Context, client pb.TuringMachineRpcClient, ttffn string, initfn string) *ClientCli {
 	return &ClientCli{
-		TtfFileName: ttffn,
-		Ctx:         ctx,
-		Client:      client,
+		TtfFileName:  ttffn,
+		InitFileName: initfn,
+		Ctx:          ctx,
+		Client:       client,
 	}
 }
 
@@ -99,8 +101,7 @@ func readTtfXml(ccli *ClientCli, _ string) {
 }
 
 func readRisXml(ccli *ClientCli, _ string) {
-    fmt.Printf("# init: ctx:%v\n", ccli.Ctx)
-	SendInit(ccli.Ctx, ccli.Client, "01110110") // XXX fix later to read content from xml
+	SendInit(ccli.Ctx, ccli.Client, ccli.InitFileName)
 }
 
 func readXmlStringFromStdin() string {

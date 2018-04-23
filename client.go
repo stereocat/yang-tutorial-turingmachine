@@ -15,7 +15,8 @@ const (
 )
 
 var (
-	ttfFileOpt = flag.String("t", "", "transition table function data xml")
+	ttfFileOpt  = flag.String("t", "", "transition table function data xml")
+	initFileOpt = flag.String("i", "", "rpc initialize xml")
 )
 
 func main() {
@@ -32,5 +33,5 @@ func main() {
 	defer cancel()
 
 	log.Printf("Start CLI")
-	tmc.NewClientCli(ctx, client, *ttfFileOpt).Start()
+	tmc.NewClientCli(ctx, client, *ttfFileOpt, *initFileOpt).Start()
 }
