@@ -17,10 +17,9 @@ func SendInit(ctx context.Context, client pb.TuringMachineRpcClient, initFileNam
 		log.Fatalf("file: %s not found.", initFileName)
 		os.Exit(1)
 	}
-	log.Printf("# initReq: %v\n", initRequest)
+	log.Printf("tape content: %s\n", initRequest.GetTapeContent())
 
-	_, err := client.Initialize(ctx, initRequest) // return Empty
-	if err != nil {
+	if _, err := client.Initialize(ctx, initRequest); err != nil {
 		log.Fatalf("could not initialize: %v\n", err)
 	}
 	log.Printf("End initialize\n")
@@ -35,8 +34,8 @@ func SendConfig(ctx context.Context, client pb.TuringMachineRpcClient, ttfFileNa
 		log.Fatalf("file: %s not found.", ttfFileName)
 		os.Exit(1)
 	}
-	_, err := client.Configure(ctx, ttf)
-	if err != nil {
+
+	if _, err := client.Configure(ctx, ttf); err != nil {
 		log.Fatalf("could not configure: %v\n", err)
 	}
 	log.Printf("End configure\n")

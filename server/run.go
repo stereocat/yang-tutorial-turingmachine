@@ -51,22 +51,29 @@ func getOutputString(action *pb.TuringMachine_TransitionFunction_Delta_Output) s
 func (svr *Server) RunTM() uint32 {
 	tm := svr.TuringMachine
 	step := 1
-	finishState := svr.TransitionTable.GetFinishState()
 
-	// header
+	// check state
+	if len(tm.GetTape().GetCell()) < 1 {
+		return 1 // Cannot run when tape is not initialized
+	}
+	if len(svr.TuringMachine.GetTransitionFunction().GetDelta()) < 1 {
+		return 2 // Cannot run when transition function table is not initialized
+	}
+
+	// print header
 	indent := len([]byte(getTMString(tm, step))) - 20 // offset
 	headerString := fmt.Sprintf("Step State | Tape %%%ds | Next Write Move\n", indent)
 	fmt.Printf(headerString, " ")
 
 	// Run
+	finishState := svr.TransitionTable.GetFinishState()
 	for tm.GetState() != finishState && step < STEP_MAX {
-		var (
-			// read symbol under head-position
-			cellList      = tm.GetTape().GetCell()
-			currentSymbol = cellList[tm.GetHeadPosition()].GetSymbol()
-			// find next action by current state and symbol
-			action = svr.TransitionTable[tm.GetState()][currentSymbol]
-		)
+		// read symbol under head-position
+		cellList := tm.GetTape().GetCell()
+		currentSymbol := cellList[tm.GetHeadPosition()].GetSymbol()
+		// find next action by current state and symbol
+		action := svr.TransitionTable[tm.GetState()][currentSymbol]
+
 		// print step
 		fmt.Println(getTMString(tm, step) + getOutputString(action))
 		// Go to Next: change state and head-position
@@ -76,7 +83,7 @@ func (svr *Server) RunTM() uint32 {
 	fmt.Println(getTMString(tm, step) + " END")
 
 	if step >= STEP_MAX {
-		return 1
+		return 9
 	}
 	return 0
 }
