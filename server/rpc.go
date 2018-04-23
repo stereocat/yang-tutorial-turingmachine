@@ -32,7 +32,7 @@ func (svr *Server) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, er
 		}
 	}
 	svr.TransitionTable = NewTTF(svr.TuringMachine.GetTransitionFunction())
-	svr.TransitionTable.PrintTable()
+	svr.TransitionTable.Print()
 	return &pb.Empty{}, nil
 }
 

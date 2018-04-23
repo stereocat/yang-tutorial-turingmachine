@@ -28,14 +28,14 @@ $ make
 
 Run server
 ```
-$ ./tm_server
+$ ./tmserver
 ```
 Run client (in another terminal),  and type command like below.
 ```
-$ ./tm_client -t turing-machi.xml -i turing-machine-rpc.xml
+$ ./tmclient -t data/turing-machi.xml -i data/turing-machine-rpc.xml
 command: help
 command: get
-command: initialize
+command: init
 command: config
 command: run
 command: get

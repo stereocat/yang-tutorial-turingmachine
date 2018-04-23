@@ -12,8 +12,8 @@ type TtfOutputMap map[string]*pb.TuringMachine_TransitionFunction_Delta_Output
 // state-[symbol-output] map
 type TTF map[uint32]TtfOutputMap
 
-func NewTTF(ttf_config *pb.TuringMachine_TransitionFunction) TTF {
-	deltaList := ttf_config.GetDelta()
+func NewTTF(ttfConfig *pb.TuringMachine_TransitionFunction) TTF {
+	deltaList := ttfConfig.GetDelta()
 	ttf := make(TTF)
 	for _, delta := range deltaList {
 		var input = delta.GetInput()
@@ -25,7 +25,7 @@ func NewTTF(ttf_config *pb.TuringMachine_TransitionFunction) TTF {
 	return ttf
 }
 
-func (ttf TTF) PrintTable() {
+func (ttf TTF) Print() {
 	fmt.Printf("input        | output\n")
 	fmt.Printf("state symbol | state symbol headmove\n")
 	for inputState, outputMap := range ttf {

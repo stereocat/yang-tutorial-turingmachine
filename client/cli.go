@@ -34,11 +34,7 @@ func newCommandMap() CommandMap {
 		Description: "Read Transition Table XML",
 		Action:      readTtfXml,
 	}
-	// ct["show"] = CommandDef{
-	// 	Description: "Show Turing Machine State",
-	// 	Action:      printState,
-	// }
-	ct["initialize"] = CommandDef{
+	ct["init"] = CommandDef{
 		Description: "Read RPC Init XML",
 		Action:      readRisXml,
 	}

@@ -7,21 +7,6 @@ import (
 	"strings"
 )
 
-// func (c *Config) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-// 	uu := struct {
-// 		XMLName       xml.Name      `xml:"config"`
-// 		xmlns         string        `xml:"xmlns,attr"`
-// 		TuringMachine TuringMachine `xml:"turing-machine"`
-// 	}{}
-// 	if err := d.DecodeElement(&uu, &start); err != nil {
-// 		return err
-// 	}
-// 	// log.Printf("B decoder: %v\nstartelement: %v\nConfig: %v\nuu: %v\n", d, start, c, uu)
-//     log.Printf("uu: %v\n", uu)
-// 	*c = Config{TuringMachine: &uu.TuringMachine}
-// 	return nil
-// }
-
 func stringFromXmlFile(xmlFileName string) string {
 	xmlFile, err := os.Open(xmlFileName)
 	if err != nil {
