@@ -28,11 +28,9 @@ func main() {
 	defer conn.Close()
 	client := pb.NewTuringMachineRpcClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute) // timeout 5 minute
 	defer cancel()
 
-	tmc.SendInit(ctx, client, "01110110")
-	tmc.SendConfig(ctx, client, *ttfFileOpt)
-	tmc.SendRun(ctx, client)
-	tmc.SendGetState(ctx, client)
+	log.Printf("Start CLI")
+	tmc.NewClientCli(ctx, client, *ttfFileOpt).Start()
 }
