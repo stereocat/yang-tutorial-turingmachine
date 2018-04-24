@@ -3,50 +3,46 @@ package tmclient
 import (
 	pb "../proto"
 	"fmt"
-	"golang.org/x/net/context"
 	"log"
-	"os"
 )
 
 // SendInit sends InitializeRequest message to Server
-func SendInit(ctx context.Context, client pb.TuringMachineRpcClient, initFileName string) {
+func (tmClient *TMClient) SendInit() {
 	log.Printf("Initialize")
 	var initRequest *pb.InitializeRequest
-	if initFileName != "" {
-		initRequest = ReadInitRequestFromFile(initFileName)
+	if tmClient.InitFileName != "" {
+		initRequest = ReadInitRequestFromFile(tmClient.InitFileName)
 	} else {
-		log.Fatalf("file: %s not found.", initFileName)
-		os.Exit(1)
+		log.Fatalf("file: %s not found.", tmClient.InitFileName)
 	}
 	log.Printf("tape content: %s\n", initRequest.GetTapeContent())
 
-	if _, err := client.Initialize(ctx, initRequest); err != nil {
+	if _, err := tmClient.Client.Initialize(tmClient.Ctx, initRequest); err != nil {
 		log.Fatalf("could not initialize: %v\n", err)
 	}
 	log.Printf("End initialize\n")
 }
 
 // SendConfig sends Configure message to Server
-func SendConfig(ctx context.Context, client pb.TuringMachineRpcClient, ttfFileName string) {
+func (tmClient *TMClient) SendConfig() {
 	log.Printf("Configure")
 	var ttf *pb.Config
-	if ttfFileName != "" {
-		ttf = ReadTtfFromFile(ttfFileName)
+	if tmClient.TtfFileName != "" {
+		ttf = ReadTtfFromFile(tmClient.TtfFileName)
 	} else {
-		log.Fatalf("file: %s not found.", ttfFileName)
-		os.Exit(1)
+		log.Fatalf("file: %s not found.", tmClient.TtfFileName)
 	}
 
-	if _, err := client.Configure(ctx, ttf); err != nil {
+	if _, err := tmClient.Client.Configure(tmClient.Ctx, ttf); err != nil {
 		log.Fatalf("could not configure: %v\n", err)
 	}
 	log.Printf("End configure\n")
 }
 
 // SendRun sends Run message to Server
-func SendRun(ctx context.Context, client pb.TuringMachineRpcClient) {
+func (tmClient *TMClient) SendRun() {
 	log.Printf("Run")
-	halted, err := client.Run(ctx, &pb.Empty{})
+	halted, err := tmClient.Client.Run(tmClient.Ctx, &pb.Empty{})
 	if err != nil {
 		log.Fatalf("could not run: %v\n", err)
 	}
@@ -54,9 +50,9 @@ func SendRun(ctx context.Context, client pb.TuringMachineRpcClient) {
 }
 
 // SendGetState sends GetState message to Server
-func SendGetState(ctx context.Context, client pb.TuringMachineRpcClient) {
+func (tmClient *TMClient) SendGetState() {
 	log.Printf("Get State of Server Turing Machine\n")
-	tm, err := client.GetState(ctx, &pb.Empty{})
+	tm, err := tmClient.Client.GetState(tmClient.Ctx, &pb.Empty{})
 	if err != nil {
 		log.Fatalf("could not get state: %v\n", err)
 	}

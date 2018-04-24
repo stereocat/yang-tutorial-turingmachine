@@ -33,5 +33,6 @@ func main() {
 	defer cancel()
 
 	log.Printf("Start CLI")
-	tmc.NewTMClient(ctx, client, *ttfFileOpt, *initFileOpt).Start()
+	tmClient := tmc.NewTMClient(ctx, client, *ttfFileOpt, *initFileOpt)
+	tmClient.StartCli()
 }

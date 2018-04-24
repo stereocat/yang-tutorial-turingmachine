@@ -33,13 +33,13 @@ func (svr *TMServer) RunTM() uint32 {
 		// read symbol under head-position
 		cellList := tm.GetTape().GetCell()
 		currentSymbol := cellList[tm.GetHeadPosition()].GetSymbol()
-		// find next action by current state and symbol
-		action := svr.TransitionTable[tm.GetState()][currentSymbol]
+		// find next output by current state and symbol
+		output := svr.TransitionTable[tm.GetState()][currentSymbol]
 
 		// print step
-		fmt.Println(tm.ToString(step) + action.ToString())
+		fmt.Println(tm.ToString(step) + output.ToString())
 		// Go to Next: change state and head-position
-		tm.ChangeState(action)
+		tm.ChangeState(output)
 		step++
 	}
 	fmt.Println(tm.ToString(step) + " END")
@@ -53,11 +53,13 @@ func (svr *TMServer) RunTM() uint32 {
 // InitializeTapeByString initialize
 // tape content, state, head-position of Turing Machine
 func (svr *TMServer) InitializeTapeByString(tapeContent string) {
-	content := []byte(tapeContent) // string 2 []byte
+	// initialize tape by 0 length cell list
 	svr.TuringMachine.Tape = &pb.TuringMachine_Tape{
 		Cell: make([]*pb.TuringMachine_Tape_Cell, 0),
 	}
+
 	// notice: at 1st time, svr.TuringMachine.Tape == nil
+	content := []byte(tapeContent) // convert string to []byte
 	cellList := svr.TuringMachine.GetTape().GetCell()
 	for coord, byteSymbol := range content {
 		var cell = &pb.TuringMachine_Tape_Cell{

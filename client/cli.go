@@ -69,8 +69,8 @@ func NewTMClient(ctx context.Context, client pb.TuringMachineRpcClient, ttffn st
 	}
 }
 
-// Start CLI
-func (tmClient *TMClient) Start() {
+// StartCli start CLI loop
+func (tmClient *TMClient) StartCli() {
 	commandTable = newCommandMap()
 	var scanOk = true
 	for scanOk {
@@ -90,19 +90,19 @@ func (tmClient *TMClient) Start() {
 }
 
 func run(tmClient *TMClient, _ string) {
-	SendRun(tmClient.Ctx, tmClient.Client)
+	tmClient.SendRun()
 }
 
 func get(tmClient *TMClient, _ string) {
-	SendGetState(tmClient.Ctx, tmClient.Client)
+	tmClient.SendGetState()
 }
 
 func readTtfXML(tmClient *TMClient, _ string) {
-	SendConfig(tmClient.Ctx, tmClient.Client, tmClient.TtfFileName)
+	tmClient.SendConfig()
 }
 
 func readRisXML(tmClient *TMClient, _ string) {
-	SendInit(tmClient.Ctx, tmClient.Client, tmClient.InitFileName)
+	tmClient.SendInit()
 }
 
 func readXMLStringFromStdin() string {

@@ -11,7 +11,6 @@ func stringFromXMLFile(xmlFileName string) string {
 	xmlFile, err := os.Open(xmlFileName)
 	if err != nil {
 		log.Fatalf("Error: Cannot read file:%s\n", xmlFileName)
-		os.Exit(1)
 	} else {
 		defer xmlFile.Close() // close finished readXmlFile
 	}
