@@ -1,4 +1,4 @@
-package tm_client
+package tmclient
 
 import (
 	"bufio"
@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func stringFromXmlFile(xmlFileName string) string {
+func stringFromXMLFile(xmlFileName string) string {
 	xmlFile, err := os.Open(xmlFileName)
 	if err != nil {
 		log.Fatalf("Error: Cannot read file:%s\n", xmlFileName)
@@ -15,10 +15,10 @@ func stringFromXmlFile(xmlFileName string) string {
 	} else {
 		defer xmlFile.Close() // close finished readXmlFile
 	}
-	return openXmlFile(xmlFile)
+	return openXMLFile(xmlFile)
 }
 
-func openXmlFile(xmlFile *os.File) string {
+func openXMLFile(xmlFile *os.File) string {
 	// read data from file
 	var scanner = bufio.NewScanner(xmlFile)
 	var lines = make([]string, 0) // multiple lines

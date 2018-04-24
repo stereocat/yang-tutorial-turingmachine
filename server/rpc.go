@@ -1,24 +1,30 @@
-package tm_server
+package tmserver
 
 import (
 	pb "../proto"
-	context "golang.org/x/net/context"
+	"golang.org/x/net/context"
 	"log"
 )
 
-type Server struct {
+// TMServer has state of Turing Machine
+//   - TuringMachine: data received from RPC
+//   - TransitionTable: struct build from TuringMachine
+type TMServer struct {
 	TuringMachine   *pb.TuringMachine
 	TransitionTable TTF
 }
 
-func (svr *Server) Initialize(ctx context.Context, req *pb.InitializeRequest) (*pb.Empty, error) {
+// Initialize is gRPC Interface to receive tape content
+// This method initialize Turing Machine head-position/state
+func (svr *TMServer) Initialize(ctx context.Context, req *pb.InitializeRequest) (*pb.Empty, error) {
 	tapeContent := req.GetTapeContent()
 	svr.InitializeTapeByString(tapeContent)
 	log.Printf("Initialize: TapeContent: %s\n", tapeContent)
 	return &pb.Empty{}, nil
 }
 
-func (svr *Server) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, error) {
+// Configure is gRPC Interface to receive transion table function
+func (svr *TMServer) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, error) {
 	reqTm := req.GetTuringMachine()
 	if reqTm != nil {
 		// overwrite if found in request
@@ -36,11 +42,14 @@ func (svr *Server) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, er
 	return &pb.Empty{}, nil
 }
 
-func (svr *Server) Run(ctx context.Context, _ *pb.Empty) (*pb.Halted, error) {
+// Run is gRPC Interface to exec Turing Machine calculation
+func (svr *TMServer) Run(ctx context.Context, _ *pb.Empty) (*pb.Halted, error) {
 	var halted = &pb.Halted{State: svr.RunTM()}
 	return halted, nil
 }
 
-func (svr *Server) GetState(ctx context.Context, _ *pb.Empty) (*pb.TuringMachine, error) {
+// GetState is gRPC Interface
+// to send Turing Machine state, tape content and transition table
+func (svr *TMServer) GetState(ctx context.Context, _ *pb.Empty) (*pb.TuringMachine, error) {
 	return svr.TuringMachine, nil
 }

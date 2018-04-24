@@ -3,8 +3,8 @@
 *.*~
 
 # binary
-tm_server
-tm_client
+tmserver
+tmclient
 
 # Editor
 .idea

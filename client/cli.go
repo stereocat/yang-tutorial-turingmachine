@@ -1,22 +1,24 @@
-package tm_client
+package tmclient
 
 import (
 	pb "../proto"
 	"bufio"
 	"fmt"
-	context "golang.org/x/net/context"
+	"golang.org/x/net/context"
 	"os"
 	"strings"
 )
 
+// CommandDef used for CLI command and corresponding action (function)
 type CommandDef struct {
 	Description string
-	Action      func(*ClientCli, string)
+	Action      func(*TMClient, string)
 }
 
+// CommandMap is CLI command to action string
 type CommandMap map[string]CommandDef
 
-var CommandTable CommandMap
+var commandTable CommandMap
 var scanner = bufio.NewScanner(os.Stdin)
 
 func newCommandMap() CommandMap {
@@ -32,11 +34,11 @@ func newCommandMap() CommandMap {
 	}
 	ct["config"] = CommandDef{
 		Description: "Read Transition Table XML",
-		Action:      readTtfXml,
+		Action:      readTtfXML,
 	}
 	ct["init"] = CommandDef{
 		Description: "Read RPC Init XML",
-		Action:      readRisXml,
+		Action:      readRisXML,
 	}
 	ct["run"] = CommandDef{
 		Description: "Run Turing Machine",
@@ -49,15 +51,17 @@ func newCommandMap() CommandMap {
 	return ct
 }
 
-type ClientCli struct {
+// TMClient is Turing Machine Client
+type TMClient struct {
 	TtfFileName  string
 	InitFileName string
 	Ctx          context.Context
 	Client       pb.TuringMachineRpcClient
 }
 
-func NewClientCli(ctx context.Context, client pb.TuringMachineRpcClient, ttffn string, initfn string) *ClientCli {
-	return &ClientCli{
+// NewTMClient create Turing Machine Client (Constructor)
+func NewTMClient(ctx context.Context, client pb.TuringMachineRpcClient, ttffn string, initfn string) *TMClient {
+	return &TMClient{
 		TtfFileName:  ttffn,
 		InitFileName: initfn,
 		Ctx:          ctx,
@@ -65,8 +69,9 @@ func NewClientCli(ctx context.Context, client pb.TuringMachineRpcClient, ttffn s
 	}
 }
 
-func (ccli *ClientCli) Start() {
-	CommandTable = newCommandMap()
+// Start CLI
+func (tmClient *TMClient) Start() {
+	commandTable = newCommandMap()
 	var scanOk = true
 	for scanOk {
 		fmt.Printf("command: ")
@@ -74,33 +79,33 @@ func (ccli *ClientCli) Start() {
 			os.Exit(0)
 		}
 		var line = scanner.Text()
-		if val, ok := CommandTable[line]; ok {
-			val.Action(ccli, line)
+		if val, ok := commandTable[line]; ok {
+			val.Action(tmClient, line)
 		} else if line == "" {
 			continue
 		} else {
-			printCommandError(ccli, line)
+			printCommandError(tmClient, line)
 		}
 	}
 }
 
-func run(ccli *ClientCli, _ string) {
-	SendRun(ccli.Ctx, ccli.Client)
+func run(tmClient *TMClient, _ string) {
+	SendRun(tmClient.Ctx, tmClient.Client)
 }
 
-func get(ccli *ClientCli, _ string) {
-	SendGetState(ccli.Ctx, ccli.Client)
+func get(tmClient *TMClient, _ string) {
+	SendGetState(tmClient.Ctx, tmClient.Client)
 }
 
-func readTtfXml(ccli *ClientCli, _ string) {
-	SendConfig(ccli.Ctx, ccli.Client, ccli.TtfFileName)
+func readTtfXML(tmClient *TMClient, _ string) {
+	SendConfig(tmClient.Ctx, tmClient.Client, tmClient.TtfFileName)
 }
 
-func readRisXml(ccli *ClientCli, _ string) {
-	SendInit(ccli.Ctx, ccli.Client, ccli.InitFileName)
+func readRisXML(tmClient *TMClient, _ string) {
+	SendInit(tmClient.Ctx, tmClient.Client, tmClient.InitFileName)
 }
 
-func readXmlStringFromStdin() string {
+func readXMLStringFromStdin() string {
 	var line string
 	var lines = make([]string, 0) // multiple lines
 
@@ -112,17 +117,17 @@ func readXmlStringFromStdin() string {
 	return strings.Join(lines[:], "\n")
 }
 
-func printCommandHelp(_ *ClientCli, _ string) {
+func printCommandHelp(_ *TMClient, _ string) {
 	fmt.Println("    Commands:")
-	for cmd, cmdDef := range CommandTable {
+	for cmd, cmdDef := range commandTable {
 		fmt.Printf("\t%s\t\t%s\n", cmd, cmdDef.Description)
 	}
 }
 
-func printCommandError(_ *ClientCli, cmd string) {
+func printCommandError(_ *TMClient, cmd string) {
 	fmt.Printf("!! Error: unknown command: %s\n", cmd)
 }
 
-func exitCli(_ *ClientCli, _ string) {
+func exitCli(_ *TMClient, _ string) {
 	os.Exit(0)
 }

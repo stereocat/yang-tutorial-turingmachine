@@ -40,13 +40,13 @@ $(PBTARGET): $(PBFILE)
 
 .PHONY: client
 client: $(CLIENTTGT)
-$(CLIENTTGT): client.go $(PBTARGET) $(CLIENTSRC)
-	$(GOBUILD) -o $@ client.go
+$(CLIENTTGT): $(CLIENTTGT).go $(PBTARGET) $(CLIENTSRC)
+	$(GOBUILD) -o $@ $(CLIENTTGT).go
 
 .PHONY: server
 server: $(SERVERTGT)
-$(SERVERTGT): server.go $(PBTARGET) $(SERVERSRC)
-	$(GOBUILD) -o $@ server.go
+$(SERVERTGT): $(SERVERTGT).go $(PBTARGET) $(SERVERSRC)
+	$(GOBUILD) -o $@ $(SERVERTGT).go
 
 goyang: $(YANGFILE)
 	$(GOYANGCMD) --format=proto $(YANGFILE) > $(PBFILEBASE)

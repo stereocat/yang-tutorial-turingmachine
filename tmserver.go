@@ -3,7 +3,7 @@ package main
 import (
 	pb "./proto"
 	tms "./server"
-	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
@@ -19,9 +19,9 @@ func main() {
 		log.Fatalf("failed to listen: %v\n", err)
 	}
 	svr := grpc.NewServer()
-	// Regist initial state of Server struct
+	// Regist initial state of TMServer struct
 	// to avoid empty(nil) function calling
-	pb.RegisterTuringMachineRpcServer(svr, &tms.Server{
+	pb.RegisterTuringMachineRpcServer(svr, &tms.TMServer{
 		TuringMachine: &pb.TuringMachine{
 			HeadPosition: 1,
 			State:        0,

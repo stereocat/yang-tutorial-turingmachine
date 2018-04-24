@@ -1,13 +1,16 @@
-package tm_server
+package tmserver
 
 import (
 	pb "../proto"
 	"fmt"
 )
 
-const STEP_MAX = 100
+// StepMax means maxinum step count to avoid infinite loop
+const StepMax = 100
 
-func (svr *Server) RunTM() uint32 {
+// RunTM execute Turing Machine Calculation
+// returns 0 (normal) >1 (error)
+func (svr *TMServer) RunTM() uint32 {
 	tm := svr.TuringMachine
 	step := 1
 
@@ -26,7 +29,7 @@ func (svr *Server) RunTM() uint32 {
 
 	// Run
 	finishState := svr.TransitionTable.GetFinishState()
-	for tm.GetState() != finishState && step < STEP_MAX {
+	for tm.GetState() != finishState && step < StepMax {
 		// read symbol under head-position
 		cellList := tm.GetTape().GetCell()
 		currentSymbol := cellList[tm.GetHeadPosition()].GetSymbol()
@@ -41,13 +44,15 @@ func (svr *Server) RunTM() uint32 {
 	}
 	fmt.Println(tm.ToString(step) + " END")
 
-	if step >= STEP_MAX {
+	if step >= StepMax {
 		return 9
 	}
 	return 0
 }
 
-func (svr *Server) InitializeTapeByString(tapeContent string) {
+// InitializeTapeByString initialize
+// tape content, state, head-position of Turing Machine
+func (svr *TMServer) InitializeTapeByString(tapeContent string) {
 	content := []byte(tapeContent) // string 2 []byte
 	svr.TuringMachine.Tape = &pb.TuringMachine_Tape{
 		Cell: make([]*pb.TuringMachine_Tape_Cell, 0),

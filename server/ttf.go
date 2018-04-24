@@ -1,17 +1,19 @@
-package tm_server
+package tmserver
 
 import (
 	pb "../proto"
 	"fmt"
 )
 
+// TtfOutputMap is part of transition table function.
 // symbol-output map
 type TtfOutputMap map[string]*pb.TuringMachine_TransitionFunction_Delta_Output
 
-// transition table function
+// TTF is transition table function
 // state-[symbol-output] map
 type TTF map[uint32]TtfOutputMap
 
+// NewTTF is Constructor
 func NewTTF(ttfConfig *pb.TuringMachine_TransitionFunction) TTF {
 	deltaList := ttfConfig.GetDelta()
 	ttf := make(TTF)
@@ -25,6 +27,7 @@ func NewTTF(ttfConfig *pb.TuringMachine_TransitionFunction) TTF {
 	return ttf
 }
 
+// Print Transition Table to Stdout
 func (ttf TTF) Print() {
 	fmt.Printf("input        | output\n")
 	fmt.Printf("state symbol | state symbol headmove\n")
@@ -39,11 +42,12 @@ func (ttf TTF) Print() {
 	}
 }
 
+// GetFinishState return Finish (maximum) state from Transition Table
 func (ttf TTF) GetFinishState() uint32 {
 	// in this program,
 	// it assumes state of Turing Machine start by 0
 	// and finished by max value of states.
-	var maxState uint32 = 0
+	var maxState uint32 // 0 (default)
 	for _, outputMap := range ttf {
 		for _, output := range outputMap {
 			if output.GetState() > maxState {

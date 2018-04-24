@@ -1,13 +1,14 @@
-package tm_client
+package tmclient
 
 import (
 	pb "../proto"
 	"fmt"
-	context "golang.org/x/net/context"
+	"golang.org/x/net/context"
 	"log"
 	"os"
 )
 
+// SendInit sends InitializeRequest message to Server
 func SendInit(ctx context.Context, client pb.TuringMachineRpcClient, initFileName string) {
 	log.Printf("Initialize")
 	var initRequest *pb.InitializeRequest
@@ -25,6 +26,7 @@ func SendInit(ctx context.Context, client pb.TuringMachineRpcClient, initFileNam
 	log.Printf("End initialize\n")
 }
 
+// SendConfig sends Configure message to Server
 func SendConfig(ctx context.Context, client pb.TuringMachineRpcClient, ttfFileName string) {
 	log.Printf("Configure")
 	var ttf *pb.Config
@@ -41,6 +43,7 @@ func SendConfig(ctx context.Context, client pb.TuringMachineRpcClient, ttfFileNa
 	log.Printf("End configure\n")
 }
 
+// SendRun sends Run message to Server
 func SendRun(ctx context.Context, client pb.TuringMachineRpcClient) {
 	log.Printf("Run")
 	halted, err := client.Run(ctx, &pb.Empty{})
@@ -50,6 +53,7 @@ func SendRun(ctx context.Context, client pb.TuringMachineRpcClient) {
 	log.Printf("End Run, state=%d\n", halted.GetState())
 }
 
+// SendGetState sends GetState message to Server
 func SendGetState(ctx context.Context, client pb.TuringMachineRpcClient) {
 	log.Printf("Get State of Server Turing Machine\n")
 	tm, err := client.GetState(ctx, &pb.Empty{})

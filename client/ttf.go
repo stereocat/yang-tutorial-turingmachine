@@ -1,4 +1,4 @@
-package tm_client
+package tmclient
 
 import (
 	pb "../proto"
@@ -6,9 +6,10 @@ import (
 	"log"
 )
 
-// construct transition table
+// ReadTtfFromFile reads Transition Table data from file
+// to configure Turing Machine (constructor)
 func ReadTtfFromFile(xmlFileName string) *pb.Config {
-	return readTtfFromString(stringFromXmlFile(xmlFileName))
+	return readTtfFromString(stringFromXMLFile(xmlFileName))
 }
 
 // construct transition table
@@ -17,6 +18,7 @@ func readTtfFromString(xmlString string) *pb.Config {
 	return NewConfig(xmlString)
 }
 
+// NewConfig returns Transition Table data from XML string
 func NewConfig(xmlString string) *pb.Config {
 	tts := new(pb.Config) // transition table struct
 	// unmarshal (parse); xml.Unmarshal arg must be []byte
