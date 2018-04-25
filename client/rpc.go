@@ -27,11 +27,12 @@ func (tmClient *TMClient) SendConfig(config *pb.Config) {
 // SendRun sends Run message to Server
 func (tmClient *TMClient) SendRun() {
 	log.Printf("Run")
-	halted, err := tmClient.Client.Run(tmClient.Ctx, &pb.Empty{})
+	notification, err := tmClient.Client.Run(tmClient.Ctx, &pb.Empty{})
 	if err != nil {
 		log.Fatalf("could not run: %v\n", err)
 	}
-	log.Printf("End Run, state=%d\n", halted.GetState())
+	log.Printf("End Run, machine state=%d\n", notification.GetHalted().GetState())
+	fmt.Println(notification.ToXMLString())
 }
 
 // SendGetState sends GetState message to Server
@@ -41,6 +42,6 @@ func (tmClient *TMClient) SendGetState() {
 	if err != nil {
 		log.Fatalf("could not get state: %v\n", err)
 	}
-	fmt.Println(tm.ToXmlString())
+	fmt.Println(tm.ToXMLString())
 	log.Printf("End Get State\n")
 }

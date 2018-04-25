@@ -4,6 +4,7 @@ import (
 	pb "../proto"
 	"golang.org/x/net/context"
 	"log"
+	"time"
 )
 
 // TMServer has state of Turing Machine
@@ -43,9 +44,17 @@ func (svr *TMServer) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, 
 }
 
 // Run is gRPC Interface to exec Turing Machine calculation
-func (svr *TMServer) Run(ctx context.Context, _ *pb.Empty) (*pb.Halted, error) {
-	var halted = &pb.Halted{State: svr.RunTM()}
-	return halted, nil
+func (svr *TMServer) Run(ctx context.Context, _ *pb.Empty) (*pb.Notification, error) {
+	lastState, err := svr.RunTM()
+	if err == true {
+		log.Println("Run, but can not exec calculate.")
+	}
+	var notification = &pb.Notification{
+		Xmlns:     "urn:ietf:params:xml:ns:netconf:notification:1.0",
+		EventTime: time.Now().String(),
+		Halted:    &pb.Halted{State: lastState},
+	}
+	return notification, nil
 }
 
 // GetState is gRPC Interface

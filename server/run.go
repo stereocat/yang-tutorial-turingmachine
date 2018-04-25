@@ -10,16 +10,16 @@ const StepMax = 100
 
 // RunTM execute Turing Machine Calculation
 // returns 0 (normal) >1 (error)
-func (svr *TMServer) RunTM() uint32 {
+func (svr *TMServer) RunTM() (lastState uint32, err bool) {
+	var step uint32 = 1
 	tm := svr.TuringMachine
-	step := 1
 
 	// check state
 	if len(tm.GetTape().GetCell()) < 1 {
-		return 1 // Cannot run when tape is not initialized
+		return 0, true // Cannot run when tape is not initialized
 	}
 	if len(svr.TuringMachine.GetTransitionFunction().GetDelta()) < 1 {
-		return 2 // Cannot run when transition function table is not initialized
+		return 0, true // Cannot run when transition function table is not initialized
 	}
 
 	// print header
@@ -45,9 +45,9 @@ func (svr *TMServer) RunTM() uint32 {
 	fmt.Println(tm.ToString(step) + " END")
 
 	if step >= StepMax {
-		return 9
+		return tm.GetState(), true
 	}
-	return 0
+	return tm.GetState(), false
 }
 
 // InitializeTapeByString initialize

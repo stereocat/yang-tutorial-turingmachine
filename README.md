@@ -33,13 +33,13 @@ $ ./tmserver
 Run client (in another terminal),  and type command like below.
 ```
 $ ./tmclient -t data/turing-machi.xml -i data/turing-machine-rpc.xml
-command: help
-command: get
-command: init
-command: config
-command: run
-command: get
-command: exit
+command> help
+command> get
+command> init
+command> config
+command> run
+command> get
+command> exit
 ```
 
 Then client send gRPC message to server, server works as turing-machine.

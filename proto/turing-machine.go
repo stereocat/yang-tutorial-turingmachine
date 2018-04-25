@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// ToString convert Output to string.
 func (output *TuringMachine_TransitionFunction_Delta_Output) ToString() string {
 	var moveString string
 	switch output.GetHeadMove() {
@@ -17,7 +18,8 @@ func (output *TuringMachine_TransitionFunction_Delta_Output) ToString() string {
 	return fmt.Sprintf(" [S%d] %5s %4s", output.GetState(), output.GetSymbol(), moveString)
 }
 
-func (tm *TuringMachine) ToString(step int) string {
+// ToString convert TuringMachine to string
+func (tm *TuringMachine) ToString(step uint32) string {
 	var stateString string
 	stateString = fmt.Sprintf("%4d  [S%d] | ", step, tm.GetState())
 	for i, cell := range tm.GetTape().GetCell() {
@@ -30,6 +32,7 @@ func (tm *TuringMachine) ToString(step int) string {
 	return stateString
 }
 
+// ChangeState sets TuringMachine states
 func (tm *TuringMachine) ChangeState(action *TuringMachine_TransitionFunction_Delta_Output) {
 	// change to next state
 	tm.State = action.GetState()
@@ -41,18 +44,28 @@ func (tm *TuringMachine) ChangeState(action *TuringMachine_TransitionFunction_De
 	// move to next head position
 	switch action.GetHeadMove() {
 	case "left":
-		tm.HeadPosition -= 1
+		tm.HeadPosition--
 	case "right":
-		tm.HeadPosition += 1
+		tm.HeadPosition++
 	}
 }
 
-// TMXmlString
-func (tm *TuringMachine) ToXmlString() string {
+// ToXMLString converts TuringMachine to XML string
+func (tm *TuringMachine) ToXMLString() string {
 	// marshal (returns []byte)
 	var xmlBuf, err = xml.MarshalIndent(tm, "", "  ")
 	if err != nil {
-		log.Fatalf("Error: XML Marshal err: ", err)
+		log.Fatalf("Error: XML Marshal err: %v\n", err)
+	}
+	return string(xmlBuf)
+}
+
+// ToXMLString convert notification notification to XML string
+func (notification *Notification) ToXMLString() string {
+	// marshal (returns []byte)
+	var xmlBuf, err = xml.MarshalIndent(notification, "", "  ")
+	if err != nil {
+		log.Fatalf("Error: XML Marshal err: %v\n", err)
 	}
 	return string(xmlBuf)
 }

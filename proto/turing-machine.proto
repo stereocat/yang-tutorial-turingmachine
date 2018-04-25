@@ -12,7 +12,7 @@ package turing_machine;
 service TuringMachineRpc {
   rpc Configure (Config) returns (Empty);
   rpc Initialize (InitializeRequest) returns (Empty);
-  rpc Run (Empty) returns (Halted);
+  rpc Run (Empty) returns (Notification);
   rpc GetState (Empty) returns (TuringMachine);
 }
 message InitializeRequest {
@@ -29,7 +29,18 @@ message Empty { }
 message Halted {
   // The state of the control unit in which the machine has
   // halted.
+  // @inject_tag: xml:"state"
   uint32 state = 1;
+}
+
+// Notification
+message Notification {
+  // @inject_tag: xml:"xmlns,attr"
+  string xmlns = 1;
+  // @inject_tag: xml:"eventTime"
+  string event_time = 2;
+  // @inject_tag: xml:"halted"
+  Halted halted = 3;
 }
 
 // Start the Turing Machine operation.
@@ -47,7 +58,7 @@ message Config {
 // Initialize Request RPC
 message Rpc {
   // @inject_tag: xml:"message-id,attr"
-  uint32 messageId = 1;
+  uint32 message_id = 1;
   // @inject_tag: xml:"initialize"
   InitializeRequest initialize = 2;
 }

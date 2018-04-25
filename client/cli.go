@@ -78,7 +78,7 @@ func (tmClient *TMClient) StartCli() {
 	commandTable = newCommandMap()
 	var scanOk = true
 	for scanOk {
-		fmt.Printf("terms: ")
+		fmt.Printf("command> ")
 		if scanOk = scanner.Scan(); scanOk == false {
 			os.Exit(0)
 		}
