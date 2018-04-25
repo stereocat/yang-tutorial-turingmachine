@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"golang.org/x/net/context"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -21,6 +22,9 @@ type CommandMap map[string]CommandDef
 var commandTable CommandMap
 var scanner = bufio.NewScanner(os.Stdin)
 
+// regexp of command line separator
+var reSep = regexp.MustCompile(`\s+`)
+
 func newCommandMap() CommandMap {
 	var ct = make(CommandMap)
 	ct["help"] = CommandDef{
@@ -34,11 +38,11 @@ func newCommandMap() CommandMap {
 	}
 	ct["config"] = CommandDef{
 		Description: "Read Transition Table XML",
-		Action:      readTtfXML,
+		Action:      sendConfig,
 	}
 	ct["init"] = CommandDef{
 		Description: "Read RPC Init XML",
-		Action:      readRisXML,
+		Action:      sendInitRequest,
 	}
 	ct["run"] = CommandDef{
 		Description: "Run Turing Machine",
@@ -74,13 +78,18 @@ func (tmClient *TMClient) StartCli() {
 	commandTable = newCommandMap()
 	var scanOk = true
 	for scanOk {
-		fmt.Printf("command: ")
+		fmt.Printf("terms: ")
 		if scanOk = scanner.Scan(); scanOk == false {
 			os.Exit(0)
 		}
-		var line = scanner.Text()
-		if val, ok := commandTable[line]; ok {
-			val.Action(tmClient, line)
+		line := scanner.Text()
+		terms := reSep.Split(line, -1)
+		if val, ok := commandTable[terms[0]]; ok {
+			if len(terms) > 1 {
+				val.Action(tmClient, terms[1])
+			} else {
+				val.Action(tmClient, terms[0])
+			}
 		} else if line == "" {
 			continue
 		} else {
@@ -97,12 +106,28 @@ func get(tmClient *TMClient, _ string) {
 	tmClient.SendGetState()
 }
 
-func readTtfXML(tmClient *TMClient, _ string) {
-	tmClient.SendConfig()
+func sendConfig(tmClient *TMClient, fileName string) {
+	var config *pb.Config
+	if _, err := os.Stat(fileName); err == nil {
+		config = ReadTtfFromFile(fileName)
+	} else if tmClient.TtfFileName != "" {
+		config = ReadTtfFromFile(tmClient.TtfFileName)
+	} else {
+		config = NewConfig(readXMLStringFromStdin())
+	}
+	tmClient.SendConfig(config)
 }
 
-func readRisXML(tmClient *TMClient, _ string) {
-	tmClient.SendInit()
+func sendInitRequest(tmClient *TMClient, fileName string) {
+	var initRequest *pb.InitializeRequest
+	if _, err := os.Stat(fileName); err == nil {
+		initRequest = ReadInitRequestFromFile(fileName)
+	} else if tmClient.InitFileName != "" {
+		initRequest = ReadInitRequestFromFile(tmClient.InitFileName)
+	} else {
+		initRequest = NewInitRequest(readXMLStringFromStdin())
+	}
+	tmClient.SendInit(initRequest)
 }
 
 func readXMLStringFromStdin() string {
