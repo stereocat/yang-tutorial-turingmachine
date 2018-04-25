@@ -10,7 +10,7 @@ syntax = "proto3";
 // Data model for the Turing Machine.
 package turing_machine;
 service TuringMachineRpc {
-  rpc Configure (Config) returns (Empty);
+  rpc Configure (TuringMachine) returns (Empty);
   rpc Initialize (InitializeRequest) returns (Empty);
   rpc Run (Empty) returns (Notification);
   rpc GetState (Empty) returns (TuringMachine);

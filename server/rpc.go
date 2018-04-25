@@ -25,8 +25,7 @@ func (svr *TMServer) Initialize(ctx context.Context, req *pb.InitializeRequest) 
 }
 
 // Configure is gRPC Interface to receive transion table function
-func (svr *TMServer) Configure(ctx context.Context, req *pb.Config) (*pb.Empty, error) {
-	reqTm := req.GetTuringMachine()
+func (svr *TMServer) Configure(ctx context.Context, reqTm *pb.TuringMachine) (*pb.Empty, error) {
 	if reqTm != nil {
 		// overwrite if found in request
 		reqTtf := reqTm.GetTransitionFunction()

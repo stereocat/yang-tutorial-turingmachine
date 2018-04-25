@@ -49,7 +49,7 @@ func newCommandMap() CommandMap {
 		Action:      run,
 	}
 	ct["get"] = CommandDef{
-		Description: "Get Turing Machine State and Config",
+		Description: "Get Turing Machine State",
 		Action:      get,
 	}
 	return ct
@@ -107,15 +107,15 @@ func get(tmClient *TMClient, _ string) {
 }
 
 func sendConfig(tmClient *TMClient, fileName string) {
-	var config *pb.Config
+	var tm *pb.TuringMachine
 	if _, err := os.Stat(fileName); err == nil {
-		config = ReadTtfFromFile(fileName)
+		tm = ReadTuringMachineFromFile(fileName)
 	} else if tmClient.TtfFileName != "" {
-		config = ReadTtfFromFile(tmClient.TtfFileName)
+		tm = ReadTuringMachineFromFile(tmClient.TtfFileName)
 	} else {
-		config = NewConfig(readXMLStringFromStdin())
+		tm = NewTuringMachine(readXMLStringFromStdin())
 	}
-	tmClient.SendConfig(config)
+	tmClient.SendConfig(tm)
 }
 
 func sendInitRequest(tmClient *TMClient, fileName string) {

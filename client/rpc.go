@@ -16,7 +16,7 @@ func (tmClient *TMClient) SendInit(initRequest *pb.InitializeRequest) {
 }
 
 // SendConfig sends Configure message to Server
-func (tmClient *TMClient) SendConfig(config *pb.Config) {
+func (tmClient *TMClient) SendConfig(config *pb.TuringMachine) {
 	log.Printf("Configure")
 	if _, err := tmClient.Client.Configure(tmClient.Ctx, config); err != nil {
 		log.Fatalf("could not configure: %v\n", err)

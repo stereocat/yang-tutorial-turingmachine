@@ -49,20 +49,20 @@ func NewInitRequest(xmlString string) *pb.InitializeRequest {
 	return rpcInitReq.GetInitialize()
 }
 
-// for TTF(Config)
+// for TTF(TuringMachine)
 
-// ReadTtfFromFile reads Transition Table data from file
+// ReadTuringMachineFromFile reads Transition Table data from file
 // to configure Turing Machine (constructor)
-func ReadTtfFromFile(xmlFileName string) *pb.Config {
-	return NewConfig(stringFromXMLFile(xmlFileName))
+func ReadTuringMachineFromFile(xmlFileName string) *pb.TuringMachine {
+	return NewTuringMachine(stringFromXMLFile(xmlFileName))
 }
 
-// NewConfig returns Transition Table data from XML string
-func NewConfig(xmlString string) *pb.Config {
+// NewTuringMachine returns Transition Table data from XML string
+func NewTuringMachine(xmlString string) *pb.TuringMachine {
 	config := new(pb.Config) // transition table struct
 	// unmarshal (parse); xml.Unmarshal arg must be []byte
 	if err := xml.Unmarshal([]byte(xmlString), config); err != nil {
 		log.Printf("Error: TransitionTable XML Unmarshal error: %v\n", err)
 	}
-	return config
+	return config.GetTuringMachine()
 }
