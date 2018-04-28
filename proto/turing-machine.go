@@ -1,6 +1,7 @@
 package turing_machine
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"log"
@@ -55,9 +56,18 @@ func (tm *TuringMachine) ToXMLString() string {
 	// marshal (returns []byte)
 	var xmlBuf, err = xml.MarshalIndent(tm, "", "  ")
 	if err != nil {
-		log.Fatalf("Error: XML Marshal err: %v\n", err)
+		log.Fatalf("Error: Turing Machine XML Marshal err: %v\n", err)
 	}
 	return string(xmlBuf)
+}
+
+// ToJSONString converts TuringMachine to JSON string
+func (tm *TuringMachine) ToJSONString() string {
+	var jsonBuf, err = json.MarshalIndent(tm, "", "  ")
+	if err != nil {
+		log.Fatalf("Error: Turing Machine JSON Marshal err: %v\n", err)
+	}
+	return string(jsonBuf)
 }
 
 // ToXMLString convert notification notification to XML string
@@ -65,7 +75,16 @@ func (notification *Notification) ToXMLString() string {
 	// marshal (returns []byte)
 	var xmlBuf, err = xml.MarshalIndent(notification, "", "  ")
 	if err != nil {
-		log.Fatalf("Error: XML Marshal err: %v\n", err)
+		log.Fatalf("Error: Notification XML Marshal err: %v\n", err)
 	}
 	return string(xmlBuf)
+}
+
+// ToJSONString convert notification notification to JSON string
+func (notification *Notification) ToJSONString() string {
+	var jsonBuf, err = json.MarshalIndent(notification, "", "  ")
+	if err != nil {
+		log.Fatalf("Error: Notification JSON Marshal err: %v\n", err)
+	}
+	return string(jsonBuf)
 }

@@ -61,15 +61,19 @@ type TMClient struct {
 	InitFileName string
 	Ctx          context.Context
 	Client       pb.TuringMachineRpcClient
+	UseJSON      bool
 }
 
 // NewTMClient create Turing Machine Client (Constructor)
-func NewTMClient(ctx context.Context, client pb.TuringMachineRpcClient, ttffn string, initfn string) *TMClient {
+func NewTMClient(
+	ctx context.Context, client pb.TuringMachineRpcClient,
+	ttfFileName string, initFileName string, useJSON bool) *TMClient {
 	return &TMClient{
-		TtfFileName:  ttffn,
-		InitFileName: initfn,
+		TtfFileName:  ttfFileName,
+		InitFileName: initFileName,
 		Ctx:          ctx,
 		Client:       client,
+		UseJSON:      useJSON,
 	}
 }
 
@@ -107,26 +111,12 @@ func get(tmClient *TMClient, _ string) {
 }
 
 func sendConfig(tmClient *TMClient, fileName string) {
-	var tm *pb.TuringMachine
-	if _, err := os.Stat(fileName); err == nil {
-		tm = ReadTuringMachineFromFile(fileName)
-	} else if tmClient.TtfFileName != "" {
-		tm = ReadTuringMachineFromFile(tmClient.TtfFileName)
-	} else {
-		tm = NewTuringMachine(readXMLStringFromStdin())
-	}
+	tm := tmClient.ReadTuringMachineFromFile(fileName)
 	tmClient.SendConfig(tm)
 }
 
 func sendInitRequest(tmClient *TMClient, fileName string) {
-	var initRequest *pb.InitializeRequest
-	if _, err := os.Stat(fileName); err == nil {
-		initRequest = ReadInitRequestFromFile(fileName)
-	} else if tmClient.InitFileName != "" {
-		initRequest = ReadInitRequestFromFile(tmClient.InitFileName)
-	} else {
-		initRequest = NewInitRequest(readXMLStringFromStdin())
-	}
+	initRequest := tmClient.ReadInitRequestFromFile(fileName)
 	tmClient.SendInit(initRequest)
 }
 

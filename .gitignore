@@ -6,6 +6,14 @@
 tmserver
 tmclient
 
+# tutorial data
+data/*.rn[cg]
+data/*.sch
+data/*.dsrl
+data/*.xsl
+data/*.json
+data/*.patch
+
 # Editor
 .idea
 

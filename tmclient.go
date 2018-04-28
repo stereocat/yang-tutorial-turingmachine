@@ -17,6 +17,7 @@ const (
 var (
 	ttfFileOpt  = flag.String("t", "", "transition table function data xml")
 	initFileOpt = flag.String("i", "", "rpc initialize xml")
+	useJson     = flag.Bool("j", false, "Use JSON instead of XML")
 )
 
 func main() {
@@ -33,6 +34,6 @@ func main() {
 	defer cancel()
 
 	log.Printf("Start CLI")
-	tmClient := tmc.NewTMClient(ctx, client, *ttfFileOpt, *initFileOpt)
+	tmClient := tmc.NewTMClient(ctx, client, *ttfFileOpt, *initFileOpt, *useJson)
 	tmClient.StartCli()
 }

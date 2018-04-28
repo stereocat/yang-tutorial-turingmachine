@@ -32,7 +32,11 @@ func (tmClient *TMClient) SendRun() {
 		log.Fatalf("could not run: %v\n", err)
 	}
 	log.Printf("End Run, machine state=%d\n", notification.GetHalted().GetState())
-	fmt.Println(notification.ToXMLString())
+	if tmClient.UseJSON {
+		fmt.Println(notification.ToJSONString())
+	} else {
+		fmt.Println(notification.ToXMLString())
+	}
 }
 
 // SendGetState sends GetState message to Server
@@ -42,6 +46,10 @@ func (tmClient *TMClient) SendGetState() {
 	if err != nil {
 		log.Fatalf("could not get state: %v\n", err)
 	}
-	fmt.Println(tm.ToXMLString())
+	if tmClient.UseJSON {
+		fmt.Println(tm.ToJSONString())
+	} else {
+		fmt.Println(tm.ToXMLString())
+	}
 	log.Printf("End Get State\n")
 }
