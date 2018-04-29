@@ -5,8 +5,8 @@ import (
 	"fmt"
 )
 
-// StepMax means maxinum step count to avoid infinite loop
-const StepMax = 100
+// StepMax means maximum step count to avoid infinite loop
+const StepMax = 20
 
 // RunTM execute Turing Machine Calculation
 // returns 0 (normal) >1 (error)
@@ -32,14 +32,23 @@ func (svr *TMServer) RunTM() (lastState uint32, err bool) {
 	for tm.GetState() != finishState && step < StepMax {
 		// read symbol under head-position
 		cellList := tm.GetTape().GetCell()
-		currentSymbol := cellList[tm.GetHeadPosition()].GetSymbol()
+
 		// find next output by current state and symbol
-		output := svr.TransitionTable[tm.GetState()][currentSymbol]
+		var delta *pb.TuringMachine_TransitionFunction_Delta
+		headPos := tm.GetHeadPosition()
+		if headPos >= 0 && int(headPos) < len(cellList) {
+			delta = svr.TransitionTable[tm.GetState()][cellList[headPos].GetSymbol()]
+		} else {
+			// out of range
+			delta = svr.TransitionTable[tm.GetState()][""]
+			fmt.Println("             cell-list out-of-lange :",
+				delta.GetOutput().ToString())
+		}
 
 		// print step
-		fmt.Println(tm.ToString(step) + output.ToString())
+		fmt.Println(tm.ToString(step), delta.GetOutput().ToString(), delta.GetLabel())
 		// Go to Next: change state and head-position
-		tm.ChangeState(output)
+		tm.ChangeState(delta.GetOutput())
 		step++
 	}
 	fmt.Println(tm.ToString(step) + " END")
@@ -68,7 +77,24 @@ func (svr *TMServer) InitializeTapeByString(tapeContent string) {
 		}
 		cellList = append(cellList, cell)
 	}
+	// DO NOT initialize TransitionFunction
 	svr.TuringMachine.GetTape().Cell = cellList
-	svr.TuringMachine.HeadPosition = 1
+	svr.TuringMachine.HeadPosition = 0
 	svr.TuringMachine.State = 0
+}
+
+// NewTMServer returns empty Turing Machine Server
+func NewTMServer() *TMServer {
+	return &TMServer{
+		TuringMachine: &pb.TuringMachine{
+			HeadPosition: 0,
+			State:        0,
+			Tape: &pb.TuringMachine_Tape{
+				Cell: make([]*pb.TuringMachine_Tape_Cell, 0),
+			},
+			// set to avoid empty(nil) function calling
+			TransitionFunction: &pb.TuringMachine_TransitionFunction{},
+		},
+		TransitionTable: TTF{}, // map(ref-type)
+	}
 }

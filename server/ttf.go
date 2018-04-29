@@ -5,24 +5,24 @@ import (
 	"fmt"
 )
 
-// TtfOutputMap is part of transition table function.
+// TtfDeltaMap is part of transition table function.
 // symbol-output map
-type TtfOutputMap map[string]*pb.TuringMachine_TransitionFunction_Delta_Output
+type TtfDeltaMap map[string]*pb.TuringMachine_TransitionFunction_Delta
 
 // TTF is transition table function
 // state-[symbol-output] map
-type TTF map[uint32]TtfOutputMap
+type TTF map[uint32]TtfDeltaMap
 
 // NewTTF is Constructor
 func NewTTF(ttfConfig *pb.TuringMachine_TransitionFunction) TTF {
-	deltaList := ttfConfig.GetDelta()
 	ttf := make(TTF)
-	for _, delta := range deltaList {
-		var input = delta.GetInput()
+	for _, delta := range ttfConfig.GetDelta() {
+		input := delta.GetInput()
 		if ttf[input.GetState()] == nil {
-			ttf[input.GetState()] = make(TtfOutputMap)
+			// create space of pointer
+			ttf[input.GetState()] = make(TtfDeltaMap)
 		}
-		ttf[input.GetState()][input.GetSymbol()] = delta.GetOutput()
+		ttf[input.GetState()][input.GetSymbol()] = delta
 	}
 	return ttf
 }
@@ -30,14 +30,12 @@ func NewTTF(ttfConfig *pb.TuringMachine_TransitionFunction) TTF {
 // Print Transition Table to Stdout
 func (ttf TTF) Print() {
 	fmt.Printf("input        | output\n")
-	fmt.Printf("state symbol | state symbol headmove\n")
-	for inputState, outputMap := range ttf {
-		for inputSymbol, output := range outputMap {
-			fmt.Printf("   S%d %6s |    S%d %6s %8s\n",
+	fmt.Printf("state symbol | state symbol move\n")
+	for inputState, deltaMap := range ttf {
+		for inputSymbol, delta := range deltaMap {
+			fmt.Printf("   S%d %6s |  %s %s\n",
 				inputState, inputSymbol,
-				output.GetState(),
-				output.GetSymbol(),
-				output.GetHeadMove())
+				delta.GetOutput().ToString(), delta.GetLabel())
 		}
 	}
 }
@@ -48,10 +46,10 @@ func (ttf TTF) GetFinishState() uint32 {
 	// it assumes state of Turing Machine start by 0
 	// and finished by max value of states.
 	var maxState uint32 // 0 (default)
-	for _, outputMap := range ttf {
-		for _, output := range outputMap {
-			if output.GetState() > maxState {
-				maxState = output.GetState()
+	for _, deltaMap := range ttf {
+		for _, delta := range deltaMap {
+			if delta.GetOutput().GetState() > maxState {
+				maxState = delta.GetOutput().GetState()
 			}
 		}
 	}

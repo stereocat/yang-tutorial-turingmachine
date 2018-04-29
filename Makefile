@@ -8,6 +8,7 @@ GOBUILD := $(GOCMD) build
 GOCLEAN := $(GOCMD) clean
 PROTOC := protoc
 GOFMT := gofmt
+GOLINT := golint
 
 FILEBODY := turing-machine
 
@@ -23,10 +24,10 @@ PBTARGET := $(PBDIR)/$(FILEBODY).pb.go
 
 CLIENTTGT := tmclient
 CLIENTDIR := ./client
-CLIENTSRC := $(wildcard $(CLIENTDIR)/*.go)
+CLIENTSRC := $(CLIENTTGT).go $(wildcard $(CLIENTDIR)/*.go) $(wildcard $(PBDIR)/*.go)
 SERVERTGT := tmserver
 SERVERDIR := ./server
-SERVERSRC := $(wildcard $(SERVERDIR)/*.go)
+SERVERSRC := $(SERVERTGT).go $(wildcard $(SERVERDIR)/*.go) $(wildcard $(PBDIR)/*.go)
 TARGETS := $(CLIENTTGT) $(SERVERTGT)
 
 # Rules
@@ -53,6 +54,11 @@ goyang: $(YANGFILE)
 
 fmt: $(SRC)
 	$(GOFMT) -l -w -e $(SRC)
+
+lint: $(SRC)
+	$(GOLINT) $(SERVERDIR)
+	$(GOLINT) $(CLIENTDIR)
+	$(GOLINT) $(PBDIR)/$(FILEBODY).go
 
 .PHONY : clean
 clean:

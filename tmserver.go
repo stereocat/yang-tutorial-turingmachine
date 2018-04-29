@@ -19,19 +19,8 @@ func main() {
 		log.Fatalf("failed to listen: %v\n", err)
 	}
 	svr := grpc.NewServer()
-	// Regist initial state of TMServer struct
-	// to avoid empty(nil) function calling
-	pb.RegisterTuringMachineRpcServer(svr, &tms.TMServer{
-		TuringMachine: &pb.TuringMachine{
-			HeadPosition: 1,
-			State:        0,
-			Tape: &pb.TuringMachine_Tape{
-				Cell: make([]*pb.TuringMachine_Tape_Cell, 0),
-			},
-			TransitionFunction: &pb.TuringMachine_TransitionFunction{},
-		},
-		TransitionTable: tms.TTF{}, // map(ref-type)
-	})
+	// Register initial state of TMServer struct into RpcServer
+	pb.RegisterTuringMachineRpcServer(svr, tms.NewTMServer())
 	reflection.Register(svr)
 	if err := svr.Serve(listen); err != nil {
 		log.Fatalf("failed to serve: %v", err)

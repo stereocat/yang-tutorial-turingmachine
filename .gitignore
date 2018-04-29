@@ -13,6 +13,9 @@ data/*.dsrl
 data/*.xsl
 data/*.json
 data/*.patch
+data/*.jsonschema
+data/*.jtox
+data/schemas.xml
 
 # Editor
 .idea

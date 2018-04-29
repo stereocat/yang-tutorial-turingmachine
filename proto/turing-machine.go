@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-// ToString convert Output to string.
+// ToString convert Output to string
 func (output *TuringMachine_TransitionFunction_Delta_Output) ToString() string {
 	var moveString string
 	switch output.GetHeadMove() {
@@ -15,8 +15,10 @@ func (output *TuringMachine_TransitionFunction_Delta_Output) ToString() string {
 		moveString = "<= "
 	case "right":
 		moveString = " =>"
+	default:
+		moveString = " -:" // default (if empty)
 	}
-	return fmt.Sprintf(" [S%d] %5s %4s", output.GetState(), output.GetSymbol(), moveString)
+	return fmt.Sprintf("[S%d] %5s %4s", output.GetState(), output.GetSymbol(), moveString)
 }
 
 // ToString convert TuringMachine to string
@@ -36,7 +38,12 @@ func (tm *TuringMachine) ToString(step uint32) string {
 // ChangeState sets TuringMachine states
 func (tm *TuringMachine) ChangeState(action *TuringMachine_TransitionFunction_Delta_Output) {
 	// change to next state
-	tm.State = action.GetState()
+	// Notice: protobuf-defined GetStaet() returns 0 when "state element is empty",
+	//   same as initial state 0. But, it is different of "State 0" (existing state 0).
+	//   This turing-machine assumes that its state starts 0 and DOES NOT back to 0 again.
+	if action.GetState() > 0 {
+		tm.State = action.GetState()
+	}
 	// write symbol to tape under head-position
 	if action.GetSymbol() != "" {
 		cellList := tm.GetTape().GetCell()
@@ -46,7 +53,7 @@ func (tm *TuringMachine) ChangeState(action *TuringMachine_TransitionFunction_De
 	switch action.GetHeadMove() {
 	case "left":
 		tm.HeadPosition--
-	case "right":
+	default:
 		tm.HeadPosition++
 	}
 }

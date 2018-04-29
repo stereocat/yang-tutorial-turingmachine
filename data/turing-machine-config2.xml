@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- file: turing-machine-config.xml -->
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    "Addition" Turing Machine
+    - Turing Machines (Stanford Encyclopedia of Philosophy)
+      https://plato.stanford.edu/entries/turing-machine/
+    - コンピュータアーキテクチャの話(108) チューリングマシン | マイナビニュース
+      https://news.mynavi.jp/article/architecture-108/
+    -->
 <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
   <turing-machine xmlns="http://example.net/turing-machine">
     <transition-function>
@@ -9,6 +15,10 @@
           <state>0</state>
           <symbol>1</symbol>
         </input>
+        <output>
+          <state>0</state>
+          <symbol/>
+        </output>
       </delta>
       <delta>
         <label>separator</label>
@@ -22,25 +32,29 @@
         </output>
       </delta>
       <delta>
-        <label>right summand</label>
+        <label>go back</label>
         <input>
           <state>1</state>
           <symbol>1</symbol>
         </input>
+        <output>
+          <state>1</state>
+          <symbol/>
+          <head-move>left</head-move>
+        </output>
       </delta>
       <delta>
-        <label>right end</label>
+        <label>at left</label>
         <input>
           <state>1</state>
           <symbol/>
         </input>
         <output>
           <state>2</state>
-          <head-move>left</head-move>
         </output>
       </delta>
       <delta>
-        <label>write separator</label>
+        <label>write separator 1</label>
         <input>
           <state>2</state>
           <symbol>1</symbol>
@@ -48,27 +62,17 @@
         <output>
           <state>3</state>
           <symbol>0</symbol>
-          <head-move>left</head-move>
         </output>
       </delta>
       <delta>
-        <label>go home</label>
+        <label>write separator 2</label>
         <input>
           <state>3</state>
           <symbol>1</symbol>
         </input>
         <output>
-          <head-move>left</head-move>
-        </output>
-      </delta>
-      <delta>
-        <label>final step</label>
-        <input>
-          <state>3</state>
-          <symbol/>
-        </input>
-        <output>
           <state>4</state>
+          <symbol>0</symbol>
         </output>
       </delta>
     </transition-function>
